@@ -2,6 +2,8 @@ package com.nukethewhales.tools.ani;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A controller to add and update animations.
@@ -13,19 +15,40 @@ public class AnimationController {
 	/**
 	 * The animations to control.
 	 */
-	private List<AbstractAnimation> animations;
+	private List<AbstractAnimation> animations = new ArrayList<AbstractAnimation>();;
 
 	/**
 	 * A cache of animations to remove.
 	 */
-	private List<AbstractAnimation> cacheAnimationsToRemove;
+	private List<AbstractAnimation> cacheAnimationsToRemove = new ArrayList<AbstractAnimation>();
 
 	/**
-	 * Creates a new animation controller.
+	 * A time to schedule animation updates or null.
 	 */
-	public AnimationController() {
-		this.animations = new ArrayList<AbstractAnimation>();
-		this.cacheAnimationsToRemove = new ArrayList<AbstractAnimation>();
+	private Timer timer = null;
+
+	/**
+	 * Creates a new animation controller. Does not update
+	 * itself. Use this if you want to update animations
+	 * on your own (e.g. every render frame)
+	 *
+	 */
+	public AnimationController() { }
+
+	/**
+	 * Creates a new animation controller. Updates it self
+	 * for ever pInterval in milliseconds.
+	 * @param pInterval The update interval in milliseconds.
+	 */
+	public AnimationController(int pInterval) {
+		timer = new Timer();
+		TimerTask timerTask = new TimerTask() {
+			@Override
+			public void run() {
+				updateAnimations();
+			}
+		};
+		timer.schedule(timerTask, pInterval, pInterval);
 	}
 
 	/**
