@@ -1,4 +1,4 @@
 Ani
 ===
 
-A simple animations tool for Java applications.
+A simple animation tool for Java applications.
