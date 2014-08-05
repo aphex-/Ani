@@ -23,7 +23,7 @@ HelloWorldAnimation myAnimation = new HelloWorldAnimation(new AnimationFinishedL
 animationController.addAnimation(myAnimation);
 ```
 
-#### How to write an custom animation.
+#### How to write a custom animation.
 ```java
 /**
  * An animation that inherits form AbstractAnimation and animates "Hello World" to the console.
