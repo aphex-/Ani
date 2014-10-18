@@ -7,7 +7,7 @@ This library contains an AbstractAnimation to inherit from. It helps to create a
 
 #### How to use the controller
 ```java
-// Create a animation controller with an update interval of 300 milliseconds.
+// Create an animation controller with an update interval of 300 milliseconds.
 AnimationController animationController = new AnimationController(300);
 
 // Create an instance of our animation.
