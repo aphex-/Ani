@@ -1,4 +1,4 @@
-package com.nukethewhales.tools.ani;
+package com.nukethemoon.tools.ani;
 
 /**
  *

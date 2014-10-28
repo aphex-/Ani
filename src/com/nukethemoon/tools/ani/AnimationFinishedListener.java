@@ -1,4 +1,4 @@
-package com.nukethewhales.tools.ani;
+package com.nukethemoon.tools.ani;
 
 /**
  * A listener that can be used to listen to an animation to finish.
