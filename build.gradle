@@ -2,9 +2,18 @@ apply plugin: 'java'
 version = '1.0'
 
 jar {
+	baseName = 'Ani'
+
 	manifest {
 		attributes 'Implementation-Title': 'Ani Animation Library',
 				'Implementation-Version': version
 	}
 }
 
+sourceSets {
+	main {
+		java {
+			srcDir 'src'
+		}
+	}
+}

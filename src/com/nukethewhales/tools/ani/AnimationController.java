@@ -23,10 +23,13 @@ public class AnimationController {
 	 */
 	private List<AbstractAnimation> cacheAnimationsToRemove;
 
+	private AnimationFinishedListener allAnimationsFinishedListener;
+
 	/**
 	 * A time to schedule animation updates or null.
 	 */
 	private Timer timer = null;
+	private float timeFactor = 1.0f;
 
 	/**
 	 * Creates a new animation controller. Use this if you want to update animations
@@ -53,6 +56,16 @@ public class AnimationController {
 			}
 		};
 		timer.schedule(timerTask, pInterval, pInterval);
+	}
+
+
+	/**
+	 * Sets the time factor for all animations controlled by this.
+	 * 1.0 is standard time.
+	 * @param pTimeFactor
+	 */
+	public void setTimeFactor(float pTimeFactor) {
+
 	}
 
 	/**
@@ -90,27 +103,46 @@ public class AnimationController {
 	 */
 
 	public final boolean updateAnimations() {
-		boolean didHandleAnyAnimation = false;
-
-		// handle current animations
+		boolean didHandleAnimation = false;
 		for (AbstractAnimation animation : animations) {
-			if (animation.isFinished()) {
+			if (animation.isFinished() && animation.getLoop() != -1) {
 				cacheAnimationsToRemove.add(animation);
 			} else {
+
+				if (animation.isFinished() && animation.getLoop() == -1) {
+					animation.start();
+				}
+
 				if (animation.isStarted()) {
 					animation.update();
-					didHandleAnyAnimation = true;
+					didHandleAnimation = true;
 				}
 			}
 		}
-
-		// remove finished animations.
 		for (AbstractAnimation animation : cacheAnimationsToRemove) {
 			animation.callAnimationFinishedListener();
 			animations.remove(animation);
+
+			if (animations.size() == 0 && allAnimationsFinishedListener != null) {
+				allAnimationsFinishedListener.onAnimationFinished();
+			}
 		}
 		cacheAnimationsToRemove.clear();
+		return didHandleAnimation;
+	}
 
-		return didHandleAnyAnimation;
+	/**
+	 * Finishes the assigned animation.
+	 * @param pAnimation The animatipon to finish.
+	 */
+	public void finishAnimation(AbstractAnimation pAnimation) {
+		if (pAnimation != null) {
+			pAnimation.onFinish();
+			animations.remove(pAnimation);
+		}
+	}
+
+	public void setAllAnimationFinishedListener(AnimationFinishedListener pListener) {
+		allAnimationsFinishedListener =  pListener;
 	}
 }
