@@ -133,16 +133,30 @@ public class AnimationController {
 		}
 	}
 
+	/**
+	 * Sets a listener that will be called if all animations of this controller are finished.
+	 * @param pListener The listener to call.
+	 */
 	public void setAllAnimationFinishedListener(AnimationFinishedListener pListener) {
 		allAnimationsFinishedListener =  pListener;
 	}
 
+	/**
+	 * Stets a global factor to the animation speed.
+	 * Value 1.0 is the standard value.
+	 * The assigned value must be higher than 0.0.
+	 * @param pTimeFactor The time factor to set for all animations.
+	 */
 	public static void setGlobalAnimationTimeFactor(float pTimeFactor) {
 		if (pTimeFactor > 0.0f) {
 			GLOBAL_ANIMATION_TIME_FACTOR = pTimeFactor;
 		}
 	}
 
+	/**
+	 * Gets the global time factor used for all animations.
+	 * @return The global time factor.
+	 */
 	public static float getGlobalAnimationTimeFactor() {
 		return GLOBAL_ANIMATION_TIME_FACTOR;
 	}
