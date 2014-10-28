@@ -95,21 +95,24 @@ public class AnimationController {
 
 	public final boolean updateAnimations() {
 		boolean didHandleAnimation = false;
-		for (AbstractAnimation animation : animations) {
-			if (animation.isFinished() && animation.getLoop() != -1) {
-				cacheAnimationsToRemove.add(animation);
-			} else {
+		synchronized (animations) {
+			for (AbstractAnimation animation : animations) {
+				if (animation.isFinished() && animation.getLoop() != -1) {
+					cacheAnimationsToRemove.add(animation);
+				} else {
 
-				if (animation.isFinished() && animation.getLoop() == -1) {
-					animation.start();
-				}
+					if (animation.isFinished() && animation.getLoop() == -1) {
+						animation.start();
+					}
 
-				if (animation.isStarted()) {
-					animation.update();
-					didHandleAnimation = true;
+					if (animation.isStarted()) {
+						animation.update();
+						didHandleAnimation = true;
+					}
 				}
 			}
 		}
+
 		for (AbstractAnimation animation : cacheAnimationsToRemove) {
 			animation.callAnimationFinishedListener();
 			animations.remove(animation);

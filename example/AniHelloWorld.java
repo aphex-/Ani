@@ -1,6 +1,6 @@
-import com.nukethewhales.tools.ani.AbstractAnimation;
-import com.nukethewhales.tools.ani.AnimationController;
-import com.nukethewhales.tools.ani.AnimationFinishedListener;
+import com.nukethemoon.tools.ani.AbstractAnimation;
+import com.nukethemoon.tools.ani.AnimationController;
+import com.nukethemoon.tools.ani.AnimationFinishedListener;
 
 /**
  * @author luca.hofmann
