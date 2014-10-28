@@ -8,15 +8,17 @@ import java.util.TimerTask;
 
 /**
  * A controller to add and update animations.
-  *
+ *
  * @author lucahofmann@gmx.net
  */
 public class AnimationController {
 
+	private static float GLOBAL_ANIMATION_TIME_FACTOR = 1.0f;
+
 	/**
 	 * The animations to control.
 	 */
-	private List<AbstractAnimation> animations;
+	private final List<AbstractAnimation> animations;
 
 	/**
 	 * A cache of animations to remove.
@@ -29,7 +31,6 @@ public class AnimationController {
 	 * A time to schedule animation updates or null.
 	 */
 	private Timer timer = null;
-	private float timeFactor = 1.0f;
 
 	/**
 	 * Creates a new animation controller. Use this if you want to update animations
@@ -56,16 +57,6 @@ public class AnimationController {
 			}
 		};
 		timer.schedule(timerTask, pInterval, pInterval);
-	}
-
-
-	/**
-	 * Sets the time factor for all animations controlled by this.
-	 * 1.0 is standard time.
-	 * @param pTimeFactor
-	 */
-	public void setTimeFactor(float pTimeFactor) {
-
 	}
 
 	/**
@@ -144,5 +135,15 @@ public class AnimationController {
 
 	public void setAllAnimationFinishedListener(AnimationFinishedListener pListener) {
 		allAnimationsFinishedListener =  pListener;
+	}
+
+	public static void setGlobalAnimationTimeFactor(float pTimeFactor) {
+		if (pTimeFactor > 0.0f) {
+			GLOBAL_ANIMATION_TIME_FACTOR = pTimeFactor;
+		}
+	}
+
+	public static float getGlobalAnimationTimeFactor() {
+		return GLOBAL_ANIMATION_TIME_FACTOR;
 	}
 }

@@ -12,7 +12,6 @@ package com.nukethewhales.tools.ani;
  */
 public abstract class AbstractAnimation {
 
-	private float timeFactor = 1.0f;
 	private int loop = 1;
 
 	private AnimationFinishedListener animationFinishedListener;
@@ -54,7 +53,7 @@ public abstract class AbstractAnimation {
 
 
 	private float computeProgress() {
-		return ((float)(System.currentTimeMillis() - this.timeStarted) / (float)this.durationMillis) * timeFactor;
+		return ((float)(System.currentTimeMillis() - this.timeStarted) / (float)this.durationMillis) * AnimationController.getGlobalAnimationTimeFactor();
 	}
 
 	/**
@@ -104,10 +103,6 @@ public abstract class AbstractAnimation {
 
 	public void setLoop(int loop) {
 		this.loop = loop;
-	}
-
-	public void setTimeFactor(float pTimeFactor) {
-		timeFactor = pTimeFactor;
 	}
 
 
