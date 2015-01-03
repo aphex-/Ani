@@ -1,5 +1,8 @@
 package com.nukethemoon.tools.ani;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * This class helps to create animations by providing start, duration,
@@ -14,17 +17,20 @@ public abstract class AbstractAnimation {
 
 	private int loop = 1;
 
-	private AnimationFinishedListener animationFinishedListener;
+	private List<AnimationFinishedListener> animationFinishedListeners;
 
 	private long timeStarted;
 	private int durationMillis;
 	private boolean isLastRenderCallDone = false;
 	private boolean started = false;
 
+	public AbstractAnimation(int pDurationMillis) {
+		this(pDurationMillis, null);
+	}
 
 	public AbstractAnimation(int pDurationMillis, AnimationFinishedListener pAnimationFinishedListener) {
-		this.animationFinishedListener = pAnimationFinishedListener;
 		this.durationMillis = pDurationMillis;
+		addFinishedListener(pAnimationFinishedListener);
 	}
 
 	/**
@@ -70,8 +76,10 @@ public abstract class AbstractAnimation {
 	 */
 	public void callAnimationFinishedListener() {
 		onFinish();
-		if (this.animationFinishedListener != null) {
-			this.animationFinishedListener.onAnimationFinished();
+		if (this.animationFinishedListeners != null) {
+			for (AnimationFinishedListener listener : animationFinishedListeners) {
+				listener.onAnimationFinished();
+			}
 		}
 	}
 
@@ -85,6 +93,15 @@ public abstract class AbstractAnimation {
 		float progress = handleProgress();
 		onProgress(progress);
 		return progress;
+	}
+
+	public void addFinishedListener(AnimationFinishedListener pAnimationFinishedListener) {
+		if (pAnimationFinishedListener != null) {
+			if (animationFinishedListeners == null) {
+				animationFinishedListeners = new ArrayList<AnimationFinishedListener>();
+			}
+			animationFinishedListeners.add(pAnimationFinishedListener);
+		}
 	}
 
 	public abstract void onProgress(float pProgress);

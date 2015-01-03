@@ -87,6 +87,34 @@ public class AnimationController {
 	}
 
 	/**
+	 * Adds a sequence of animations that will be added one after another.
+	 * @param pAnimations The animation sequence to add.
+	 * @param pSequenceFinishedListener A listener that gets called if the sequence has ended.
+	 */
+	public final void addAnimationSequence(final AbstractAnimation[] pAnimations, final AnimationFinishedListener pSequenceFinishedListener) {
+		if (pAnimations != null) {
+
+			if (pAnimations.length == 1) {
+				addAnimation(pAnimations[0]);
+				return;
+			}
+
+			for (int i = 0; i < pAnimations.length - 1; i++) {
+				final AbstractAnimation animation = pAnimations[i];
+				final int finalI = i;
+				animation.addFinishedListener(new AnimationFinishedListener() {
+					@Override
+					public void onAnimationFinished() {
+						addAnimation(pAnimations[finalI + 1]);
+					}
+				});
+			}
+
+			pAnimations[pAnimations.length - 1].addFinishedListener(pSequenceFinishedListener);
+		}
+	}
+
+	/**
 	 * Calls the animation update method or removes the animation if it is done.
 	 * It also calls the "AnimationFinishListener" of the animation if it is done.
 	 *
