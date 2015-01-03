@@ -111,6 +111,8 @@ public class AnimationController {
 			}
 
 			pAnimations[pAnimations.length - 1].addFinishedListener(pSequenceFinishedListener);
+
+			addAnimation(pAnimations[0]);
 		}
 	}
 
