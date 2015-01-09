@@ -1,5 +1,5 @@
 apply plugin: 'java'
-version = '1.0.1'
+version = '1.0.2'
 
 jar {
 	baseName = 'Ani'
@@ -16,4 +16,12 @@ sourceSets {
 			srcDir 'src'
 		}
 	}
+}
+
+uploadArchives {
+    repositories {
+        flatDir {
+            dirs 'jar'
+        }
+    }
 }

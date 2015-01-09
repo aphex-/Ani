@@ -87,18 +87,48 @@ public class AnimationController {
 	}
 
 	/**
+	 * Adds multiple animations and a listener to fall if all are finished.
+	 * @param pAnimations The animations.
+	 * @param pAllAnimationFinishedListener The listener to call is all animations are finished.
+ 	 */
+	public final void addAnimations(final AbstractAnimation pAnimations[], final AnimationFinishedListener pAllAnimationFinishedListener) {
+		if (pAnimations == null || pAnimations.length == 0) {
+			return;
+		}
+		AnimationsFinishedCollector finishedCollector = null;
+		if (pAllAnimationFinishedListener != null) {
+			finishedCollector = new AnimationsFinishedCollector(pAnimations.length, pAllAnimationFinishedListener);
+		}
+		for (int i = 0; i < pAnimations.length; i++) {
+			AbstractAnimation animation = pAnimations[i];
+			if (finishedCollector != null) {
+				animation.addFinishedListener(finishedCollector);
+			}
+			this.addAnimation(animation);
+		}
+	}
+
+	/**
+	 * Adds multiple animations.
+	 * @param pAnimations The animations.
+	 */
+	public final void addAnimations(final AbstractAnimation pAnimations[]) {
+		for (int i = 0; i < pAnimations.length; i++) {
+			this.addAnimation(pAnimations[i]);
+		}
+	}
+
+	/**
 	 * Adds a sequence of animations that will be added one after another.
 	 * @param pAnimations The animation sequence to add.
 	 * @param pSequenceFinishedListener A listener that gets called if the sequence has ended.
 	 */
 	public final void addAnimationSequence(final AbstractAnimation[] pAnimations, final AnimationFinishedListener pSequenceFinishedListener) {
-		if (pAnimations != null) {
-
+		if (pAnimations != null && pAnimations.length > 0) {
 			if (pAnimations.length == 1) {
 				addAnimation(pAnimations[0]);
 				return;
 			}
-
 			for (int i = 0; i < pAnimations.length - 1; i++) {
 				final AbstractAnimation animation = pAnimations[i];
 				final int finalI = i;
@@ -109,11 +139,17 @@ public class AnimationController {
 					}
 				});
 			}
-
 			pAnimations[pAnimations.length - 1].addFinishedListener(pSequenceFinishedListener);
-
 			addAnimation(pAnimations[0]);
 		}
+	}
+
+	/**
+	 * Adds a sequence of animations that will be added one after another.
+	 * @param pAnimations The animation sequence to add.
+	 */
+	public final void addAnimationSequence(final AbstractAnimation[] pAnimations) {
+		addAnimationSequence(pAnimations, null);
 	}
 
 	/**
@@ -127,26 +163,26 @@ public class AnimationController {
 		boolean didHandleAnimation = false;
 		synchronized (animations) {
 			for (AbstractAnimation animation : animations) {
-				if (animation.isFinished() && animation.getLoop() != -1) {
+				if (animation.isFinished() && animation.getLoopCount() == 0) {
 					cacheAnimationsToRemove.add(animation);
 				} else {
-
-					if (animation.isFinished() && animation.getLoop() == -1) {
+					if (animation.isFinished() && animation.getLoopCount() == -1) {
 						animation.start();
 					}
-
-					if (animation.isStarted()) {
+					if (animation.isFinished() && animation.getLoopCount() > 0) {
+						animation.start();
+						animation.setLoopCount(animation.getLoopCount() - 1);
+					}
+					if (animation.hasStarted()) {
 						animation.update();
 						didHandleAnimation = true;
 					}
 				}
 			}
 		}
-
 		for (AbstractAnimation animation : cacheAnimationsToRemove) {
-			animation.callAnimationFinishedListener();
+			animation.callAnimationFinishedListeners();
 			animations.remove(animation);
-
 			if (animations.size() == 0 && allAnimationsFinishedListener != null) {
 				allAnimationsFinishedListener.onAnimationFinished();
 			}
@@ -156,10 +192,10 @@ public class AnimationController {
 	}
 
 	/**
-	 * Finishes the assigned animation.
-	 * @param pAnimation The animatipon to finish.
+	 * Stops the assigned animation.
+	 * @param pAnimation The animation to stop.
 	 */
-	public void finishAnimation(AbstractAnimation pAnimation) {
+	public void forceStopAnimation(AbstractAnimation pAnimation) {
 		if (pAnimation != null) {
 			pAnimation.onFinish();
 			animations.remove(pAnimation);

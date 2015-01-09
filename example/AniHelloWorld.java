@@ -22,6 +22,7 @@ public class AniHelloWorld {
 			// set the duration of the animation to its parent
 			super(5000, pAnimationFinishedListener);
 			textToPrint = "Hello World!!!";
+			setLoopCount(1);
 		}
 
 		/**
