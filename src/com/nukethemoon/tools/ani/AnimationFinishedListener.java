@@ -9,5 +9,5 @@ public interface AnimationFinishedListener {
 	/**
 	 * Callable on animation finished.
 	 */
-	void onAnimationFinished();
+	void onAnimationFinished(AbstractAnimation pAnimation);
 }

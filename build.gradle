@@ -19,9 +19,9 @@ sourceSets {
 }
 
 uploadArchives {
-    repositories {
-        flatDir {
-            dirs 'jar'
-        }
-    }
+	repositories {
+		flatDir {
+			dirs 'jar'
+		}
+	}
 }

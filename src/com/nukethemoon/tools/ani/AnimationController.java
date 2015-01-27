@@ -13,7 +13,10 @@ import java.util.TimerTask;
  */
 public class AnimationController {
 
-	private static float GLOBAL_ANIMATION_TIME_FACTOR = 1.0f;
+	/**
+	 * The global time factor used for all animations.
+	 */
+	private static float globalAnimationTimeFactor = 1.0f;
 
 	/**
 	 * The animations to control.
@@ -64,8 +67,11 @@ public class AnimationController {
 	 *
 	 * @param pAnimation The animation to add.
 	 */
-	public final void addAnimation(final AbstractAnimation pAnimation) {
-		animations.add(pAnimation.start());
+	public final AnimationController addAnimation(final AbstractAnimation pAnimation) {
+		if (pAnimation != null) {
+			animations.add(pAnimation.start());
+		}
+		return this;
 	}
 
 	/**
@@ -74,7 +80,7 @@ public class AnimationController {
 	 * @param pStartDelayMillis A delay to start the animation in milliseconds.
 	 * @param pAnimation The animation to add.
 	 */
-	public final void addAnimation(final int pStartDelayMillis, final AbstractAnimation pAnimation) {
+	public final AnimationController addAnimation(final int pStartDelayMillis, final AbstractAnimation pAnimation) {
 		new java.util.Timer().schedule(
 				new java.util.TimerTask() {
 					@Override
@@ -84,16 +90,17 @@ public class AnimationController {
 				},
 				pStartDelayMillis
 		);
+		return this;
 	}
 
 	/**
 	 * Adds multiple animations and a listener to fall if all are finished.
 	 * @param pAnimations The animations.
 	 * @param pAllAnimationFinishedListener The listener to call is all animations are finished.
- 	 */
-	public final void addAnimations(final AbstractAnimation pAnimations[], final AnimationFinishedListener pAllAnimationFinishedListener) {
+	 */
+	public final AnimationController addAnimations(final AbstractAnimation pAnimations[], final AnimationFinishedListener pAllAnimationFinishedListener) {
 		if (pAnimations == null || pAnimations.length == 0) {
-			return;
+			return this;
 		}
 		AnimationsFinishedCollector finishedCollector = null;
 		if (pAllAnimationFinishedListener != null) {
@@ -106,16 +113,18 @@ public class AnimationController {
 			}
 			this.addAnimation(animation);
 		}
+		return this;
 	}
 
 	/**
 	 * Adds multiple animations.
 	 * @param pAnimations The animations.
 	 */
-	public final void addAnimations(final AbstractAnimation pAnimations[]) {
+	public final AnimationController addAnimations(final AbstractAnimation pAnimations[]) {
 		for (int i = 0; i < pAnimations.length; i++) {
 			this.addAnimation(pAnimations[i]);
 		}
+		return this;
 	}
 
 	/**
@@ -123,18 +132,18 @@ public class AnimationController {
 	 * @param pAnimations The animation sequence to add.
 	 * @param pSequenceFinishedListener A listener that gets called if the sequence has ended.
 	 */
-	public final void addAnimationSequence(final AbstractAnimation[] pAnimations, final AnimationFinishedListener pSequenceFinishedListener) {
+	public final AnimationController addAnimationSequence(final AbstractAnimation[] pAnimations, final AnimationFinishedListener pSequenceFinishedListener) {
 		if (pAnimations != null && pAnimations.length > 0) {
 			if (pAnimations.length == 1) {
 				addAnimation(pAnimations[0]);
-				return;
+				return this;
 			}
 			for (int i = 0; i < pAnimations.length - 1; i++) {
 				final AbstractAnimation animation = pAnimations[i];
 				final int finalI = i;
 				animation.addFinishedListener(new AnimationFinishedListener() {
 					@Override
-					public void onAnimationFinished() {
+					public void onAnimationFinished(AbstractAnimation pAnimation) {
 						addAnimation(pAnimations[finalI + 1]);
 					}
 				});
@@ -142,14 +151,16 @@ public class AnimationController {
 			pAnimations[pAnimations.length - 1].addFinishedListener(pSequenceFinishedListener);
 			addAnimation(pAnimations[0]);
 		}
+		return this;
 	}
 
 	/**
 	 * Adds a sequence of animations that will be added one after another.
 	 * @param pAnimations The animation sequence to add.
 	 */
-	public final void addAnimationSequence(final AbstractAnimation[] pAnimations) {
+	public final AnimationController addAnimationSequence(final AbstractAnimation[] pAnimations) {
 		addAnimationSequence(pAnimations, null);
+		return this;
 	}
 
 	/**
@@ -181,10 +192,11 @@ public class AnimationController {
 			}
 		}
 		for (AbstractAnimation animation : cacheAnimationsToRemove) {
+			animation.onFinish();
 			animation.callAnimationFinishedListeners();
 			animations.remove(animation);
 			if (animations.size() == 0 && allAnimationsFinishedListener != null) {
-				allAnimationsFinishedListener.onAnimationFinished();
+				allAnimationsFinishedListener.onAnimationFinished(animation);
 			}
 		}
 		cacheAnimationsToRemove.clear();
@@ -195,19 +207,21 @@ public class AnimationController {
 	 * Stops the assigned animation.
 	 * @param pAnimation The animation to stop.
 	 */
-	public void forceStopAnimation(AbstractAnimation pAnimation) {
+	public AnimationController forceStopAnimation(AbstractAnimation pAnimation) {
 		if (pAnimation != null) {
 			pAnimation.onFinish();
 			animations.remove(pAnimation);
 		}
+		return this;
 	}
 
 	/**
 	 * Sets a listener that will be called if all animations of this controller are finished.
 	 * @param pListener The listener to call.
 	 */
-	public void setAllAnimationFinishedListener(AnimationFinishedListener pListener) {
+	public AnimationController setAllAnimationFinishedListener(AnimationFinishedListener pListener) {
 		allAnimationsFinishedListener =  pListener;
+		return this;
 	}
 
 	/**
@@ -218,7 +232,7 @@ public class AnimationController {
 	 */
 	public static void setGlobalAnimationTimeFactor(float pTimeFactor) {
 		if (pTimeFactor > 0.0f) {
-			GLOBAL_ANIMATION_TIME_FACTOR = pTimeFactor;
+			globalAnimationTimeFactor = pTimeFactor;
 		}
 	}
 
@@ -227,6 +241,6 @@ public class AnimationController {
 	 * @return The global time factor.
 	 */
 	public static float getGlobalAnimationTimeFactor() {
-		return GLOBAL_ANIMATION_TIME_FACTOR;
+		return globalAnimationTimeFactor;
 	}
 }

@@ -22,10 +22,12 @@ public abstract class AbstractAnimation {
 	private int durationMillis;
 	private boolean isLastRenderCallDone = false;
 	private boolean started = false;
+	private long timeElapsedOnPause = -1;
 	private int loopCount = 0;
 
 	/**
 	 * Creates a new instance.
+	 *
 	 * @param pDurationMillis The duration of the animation in milliseconds.
 	 */
 	public AbstractAnimation(int pDurationMillis) {
@@ -46,24 +48,26 @@ public abstract class AbstractAnimation {
 	 * Implement this method to apply your animation progress.
 	 * @param pProgress The current progress between 0.0 and 1.0.
 	 */
-	public abstract void onProgress(float pProgress);
+	protected abstract void onProgress(float pProgress);
 
 	/**
 	 * Implement this method to apply the finish of the animation.
 	 */
-	public abstract void onFinish();
+	protected abstract void onFinish();
 
 	/**
 	 * Implement this method to apply the start of the animation.
 	 */
-	public abstract void onStart();
+	protected abstract void onStart();
 
 	/**
 	 * Computes the progress of the animation at the current time.
+	 *
 	 * @return The progress between 0.0 and 1.0
 	 */
-	private float computeProgress() {
-		return ((float)(System.currentTimeMillis() - this.timeStarted) / (float)this.durationMillis) * AnimationController.getGlobalAnimationTimeFactor();
+	protected float computeProgress() {
+		return ((float)(System.currentTimeMillis() - this.timeStarted)
+				/ (float)this.durationMillis) * AnimationController.getGlobalAnimationTimeFactor();
 	}
 
 	/**
@@ -72,6 +76,7 @@ public abstract class AbstractAnimation {
 	 * @param pProgress The progress.
 	 * @param pStart The start limit.
 	 * @param pEnd The end limit.
+	 *
 	 * @return the progress or -1.0
 	 */
 	public static float computeIntervalProgress(float pProgress, float pStart, float pEnd) {
@@ -83,6 +88,7 @@ public abstract class AbstractAnimation {
 	/**
 	 * Computes the current animation progress (0.0 - 1.0) and returns it.
 	 * Sets the "isLastRenderCallDone" field to true if a 1.0 progress was computed.
+	 *
 	 * @return The current animation progress (0.0 - 1.0)
 	 */
 	protected float handleProgress() {
@@ -98,18 +104,22 @@ public abstract class AbstractAnimation {
 
 	/**
 	 * Starts the animation.
+	 *
 	 * @return This animation.
 	 */
 	public AbstractAnimation start() {
-		this.timeStarted = System.currentTimeMillis();
-		started = true;
-		isLastRenderCallDone = false;
-		this.onStart();
+		if (!hasStarted()) {
+			this.timeStarted = System.currentTimeMillis();
+			started = true;
+			isLastRenderCallDone = false;
+			this.onStart();
+		}
 		return this;
 	}
 
 	/**
 	 * Stops looping the animation. (After the current run through)
+	 *
 	 * @return This animation.
 	 */
 	public AbstractAnimation stopLoop() {
@@ -119,6 +129,7 @@ public abstract class AbstractAnimation {
 	/**
 	 * Returns true if the animation is done.
 	 * It is only done if the last render call (progress = 1.0) is done.
+	 *
 	 * @return true if the animation is done.
 	 */
 	public boolean isFinished() {
@@ -127,27 +138,30 @@ public abstract class AbstractAnimation {
 
 	/**
 	 * Calls the internal AnimationFinishedListener if it is not null.
+	 * Does not finish the animation.
 	 */
 	public void callAnimationFinishedListeners() {
-		onFinish();
 		if (finishedListenersList != null) {
 			for (AnimationFinishedListener listener : finishedListenersList) {
-				listener.onAnimationFinished();
+				listener.onAnimationFinished(this);
 			}
 		} else {
 			if (finishedListener != null) {
-				finishedListener.onAnimationFinished();
+				finishedListener.onAnimationFinished(this);
 			}
 		}
 	}
 
 	/**
 	 * Updates the progress. (Usually called by a animation controller)
+	 *
 	 * @return The current progress.
 	 */
 	public float update() {
 		float progress = handleProgress();
-		onProgress(progress);
+		if (hasStarted() && !isPaused()) {
+			onProgress(progress);
+		}
 		return progress;
 	}
 
@@ -205,4 +219,37 @@ public abstract class AbstractAnimation {
 		return setLoopCount(-1);
 	}
 
+	/**
+	 * Pause the animation.
+	 * @return This animation.
+	 */
+	public AbstractAnimation pause() {
+		if (hasStarted()) {
+			timeElapsedOnPause = (System.currentTimeMillis() - timeStarted);
+			if (timeElapsedOnPause < 0) {
+				timeElapsedOnPause = 0;
+			}
+		}
+		return this;
+	}
+
+	/**
+	 * Resumes the animation if it is paused.
+	 * @return This animation.
+	 */
+	public AbstractAnimation resume() {
+		if (hasStarted() && isPaused()) {
+			timeStarted = (System.currentTimeMillis() - timeElapsedOnPause);
+			timeElapsedOnPause = - 1;
+		}
+		return this;
+	}
+
+	/**
+	 * Returns true if this animation is paused.
+	 * @return true if this animation is paused.
+	 */
+	public boolean isPaused() {
+		return timeElapsedOnPause >= 0;
+	}
 }

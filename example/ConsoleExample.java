@@ -5,7 +5,7 @@ import com.nukethemoon.tools.ani.AnimationFinishedListener;
 /**
  * @author luca.hofmann
  */
-public class AniHelloWorld {
+public class ConsoleExample {
 
 	/**
 	 * An animation that inherits form AbstractAnimation and animates "Hello World" to the console.

@@ -40,10 +40,10 @@ public class AnimationsFinishedCollector implements AnimationFinishedListener {
 	 * Collects onAnimationFinished calls.
 	 */
 	@Override
-	public final void onAnimationFinished() {
+	public final void onAnimationFinished(AbstractAnimation pAnimation) {
 		collectedCalls++;
 		if (collectCount == collectedCalls) {
-			listener.onAnimationFinished();
+			listener.onAnimationFinished(pAnimation);
 		}
 	}
 }
