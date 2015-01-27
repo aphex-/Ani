@@ -61,7 +61,7 @@ public class ConsoleExample {
 		// create an instance of our animation.
 		HelloWorldAnimation myAnimation = new HelloWorldAnimation(new AnimationFinishedListener() {
 			@Override
-			public void onAnimationFinished() {
+			public void onAnimationFinished(AbstractAnimation pAnimation) {
 				// Do something after the animation.
 				System.out.println("onAnimationFinished()");
 			}
