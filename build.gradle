@@ -3,6 +3,10 @@ apply plugin: 'maven'
 
 version = '1.0.2'
 
+dependencies {
+	testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
 jar {
 	baseName = 'Ani'
 
@@ -14,10 +18,17 @@ jar {
 
 sourceSets {
 	main {
-		java {
-			srcDir 'src'
-		}
+		java.srcDir 'src'
 	}
+	unitTest {
+		java.srcDir 'test'
+	}
+}
+
+task unitTest(type:Test, dependsOn: assemble) {
+	description = "Unit tests run task"
+	testClassesDir = project.sourceSets.unitTest.output.classesDir
+	classpath = project.sourceSets.unitTest.runtimeClasspath
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
