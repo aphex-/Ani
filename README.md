@@ -1,11 +1,50 @@
 # Ani
 
-A simple animation library for Java applications.
+## A simple animation library for Java applications.
 
-This library contains an AbstractAnimation to inherit from. It helps to create animations by providing start, duration, progress and finish functionality. The AnimationController helps to control multiple animations. It can update itself by an interval or by your program (e.g. every render frame).
+If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is finished. It's also a good practice to separate such logic from your productive code.
 
+**Ani** helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*. You need to override the methods *onStart*, *onProgress* and *onFinish* to implement the animation.
 
-#### How to use the controller
+### How to write a custom animation.
+This example shows a custom animation that inherits from *AbstractAnimation*. It writes a text to the console animated char by char.
+```java
+/**
+ * An animation that inherits form AbstractAnimation and animates "Hello World" to the console.
+ */
+public static class HelloWorldAnimation extends AbstractAnimation{
+
+	private String textToPrint;
+
+	public HelloWorldAnimation() {
+		super(5000); // sets the duration of 5 sec
+	}
+
+	/**
+	 * Implement what should happen while animating.
+	 * @param pProgress The progress between 0.0 and 1.0.
+	 */
+	@Override
+	public void onProgress(float pProgress) {
+		// print the text using the progress as length.
+		System.out.println(textToPrint.substring(0, (int) (pProgress * textToPrint.length())));
+	}
+
+	@Override
+	public void onFinish() {
+		textToPrint = null;
+		System.out.println("onFinish()");
+	}
+
+	@Override
+	public void onStart() {
+		textToPrint = "Hello World!!!";
+		System.out.println("onStart()");
+	}
+}
+```
+
+## How to use the controller
 ```java
 // Create an animation controller with an update interval of 300 milliseconds.
 AnimationController animationController = new AnimationController(300);
@@ -23,50 +62,7 @@ HelloWorldAnimation myAnimation = new HelloWorldAnimation(new AnimationFinishedL
 animationController.addAnimation(myAnimation);
 ```
 
-#### How to write a custom animation.
-```java
-/**
- * An animation that inherits form AbstractAnimation and animates "Hello World" to the console.
- */
-public static class HelloWorldAnimation extends AbstractAnimation{
 
-	// the text we want to animate
-	private String textToPrint;
-
-	/**
-	 * The Hello World animation.
-	 */
-	public HelloWorldAnimation(AnimationFinishedListener pAnimationFinishedListener) {
-		// set the duration of the animation to its parent
-		super(5000, pAnimationFinishedListener);
-		textToPrint = "Hello World!!!";
-	}
-
-	/**
-	 * Implement what should happen while animating.
-	 * @param pProgress The progress of the animation.
-	 */
-	@Override
-	public void onProgress(float pProgress) {
-		// print the text using the progress as length.
-		System.out.println(textToPrint.substring(0, (int) (pProgress * textToPrint.length())));
-	}
-
-	@Override
-	public void onFinish() {
-		// animation is finished.
-		textToPrint = null;
-		System.out.println("onFinish()");
-	}
-
-	@Override
-	public void onStart() {
-		// animation starts.
-		textToPrint += "!!";
-		System.out.println("onStart()");
-	}
-}
-```
 
 ### The animation lifecycle.
 
