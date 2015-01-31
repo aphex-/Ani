@@ -4,66 +4,63 @@ currently under development
 
 ### A simple animation library for Java applications.
 
-If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is finished. It's also a good practice to separate such logic from your productive code.
+If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. It's also a good practice to separate such logic from your productive code.
 
-**Ani** helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*. You need to override the methods *onStart*, *onProgress* and *onFinish* to implement the animation.
+**Ani** tries to follow the philosophy to do only one little thing but doing it right. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*. You need to override the methods *onStart*, *onProgress* and *onFinish* to implement the animation.
 
-### How to write a custom animation.
-This example shows a custom animation that inherits from *AbstractAnimation*. It writes a text to the console animated char by char.
+### How to write a custom animation?
+This example shows a custom animation that inherits from *AbstractAnimation*. It simply fades in a Graphic that has a method **setAlpha**.
 ```java
 /**
- * An animation that inherits form AbstractAnimation and animates "Hello World" to the console.
+ * An animation to fade in a Graphic.
  */
-public static class HelloWorldAnimation extends AbstractAnimation{
+public static class SimpleFadeAnimation extends AbstractAnimation{
 
-	private String textToPrint;
+	private Graphic graphic;
 
-	public HelloWorldAnimation() {
+	public SimpleFadeAnimation(Graphic pGrapic) {
 		super(5000); // sets the duration of 5 sec
+		graphic = pGraphic;
 	}
 
-	/**
-	 * Implement what should happen while animating.
-	 * @param pProgress The progress between 0.0 and 1.0.
-	 */
+	// called constantly while animating
 	@Override
 	public void onProgress(float pProgress) {
-		// print the text using the progress as length.
-		System.out.println(textToPrint.substring(0, (int) (pProgress * textToPrint.length())));
+		graphic.setAlpha(pProgress) // progress from 0.0 to 1.0
 	}
 
+	// called once at the end
 	@Override
 	public void onFinish() {
-		textToPrint = null;
-		System.out.println("onFinish()");
+		graphic.setAlpha(1.0f); 
 	}
 
+	// called once at start
 	@Override
 	public void onStart() {
-		textToPrint = "Hello World!!!";
-		System.out.println("onStart()");
+		graphic.setAlpha(0.0f); 
 	}
 }
 ```
+This example shows the lifecycle of the animation and the fade in logic. Note that the Graphic object is nothing that comes from **Ani**.
 
-## How to use the controller
+
+## How to start an animation?
+To run your animation simply create an instance of your animation, create an **AnimationController** and add the animation to the controller.
 ```java
-// Create an animation controller with an update interval of 300 milliseconds.
-AnimationController animationController = new AnimationController(300);
+// Create an animation controller with an update interval of 30 milliseconds.
+AnimationController animationController = new AnimationController(30);
 
 // Create an instance of our animation.
-HelloWorldAnimation myAnimation = new HelloWorldAnimation(new AnimationFinishedListener() {
-	@Override
-	public void onAnimationFinished() {
-		// Do something after the animation.
-		System.out.println("onAnimationFinished()");
-	}
-});
+SimpleFadeAnimation myAnimation = new SimpleFadeAnimation(myGraphic);
 
 // Add the animation.
 animationController.addAnimation(myAnimation);
 ```
+The animation controller is reusable and must not be created for every animation. It can handle multiple animations at once.
 
+## How to get noticed if the animation has finished?
+To implement logic that should be executed after the animation you can use the simple **AnimationFinishedListener**.
 
 
 ### The animation lifecycle.
