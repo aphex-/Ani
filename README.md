@@ -6,10 +6,10 @@ currently under development
 
 If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. It's also a good practice to separate such logic from your productive code.
 
-**Ani** tries to follow the philosophy to 'do just a small thing but do this right'. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*. You need to override the methods *onStart*, *onProgress* and *onFinish* to implement the animation.
+**Ani** tries to follow the philosophy to 'do just a small thing but do it right'. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*. You need to override the methods *onStart*, *onProgress* and *onFinish* to implement the animation.
 
 ### How to write a custom animation?
-This example shows a custom animation that inherits from *AbstractAnimation*. It simply fades in a Graphic that has a method **setAlpha**.
+This example shows a custom animation that inherits from **AbstractAnimation**. It simply fades in a Graphic object that has a method called *setAlpha*.
 ```java
 /**
  * An animation to fade in a Graphic.
@@ -46,7 +46,7 @@ This example shows the lifecycle of the animation and the fade in logic. Note th
 
 
 ## How to start an animation?
-To run your animation simply create an instance of your animation, create an **AnimationController** and add the animation to the controller.
+To run your animation simply create an instance of it, create an **AnimationController** and add the animation to the controller.
 ```java
 // Create an animation controller with an update interval of 30 milliseconds.
 AnimationController animationController = new AnimationController(30);
@@ -57,10 +57,10 @@ SimpleFadeAnimation myAnimation = new SimpleFadeAnimation(myGraphic);
 // Add the animation.
 animationController.addAnimation(myAnimation);
 ```
-The animation controller is reusable and must not be created for every animation. It can handle multiple animations at once.
+The animation controller is reusable and should not be created for every animation. It can handle multiple animations at once.
 
 ## How to get noticed if the animation has finished?
-To implement logic that should be executed after the animation you can use the simple **AnimationFinishedListener**.
+To implement logic that should be executed after the animation you can simply use the **AnimationFinishedListener**.
 
 
 ### The animation lifecycle.
