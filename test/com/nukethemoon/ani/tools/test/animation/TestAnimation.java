@@ -18,4 +18,9 @@ public class TestAnimation extends AbstractAnimation {
 
 	@Override
 	protected void onStart() { }
+
+	@Override
+	protected void onLoopStart(int pLoopIndex) {
+
+	}
 }

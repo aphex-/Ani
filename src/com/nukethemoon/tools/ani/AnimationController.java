@@ -47,7 +47,7 @@ public class AnimationController {
 
 	/**
 	 * Creates a new animation controller. Updates it self
-	 * for ever pInterval in milliseconds.
+	 * every pInterval milliseconds.
 	 * @param pInterval The update interval in milliseconds.
 	 */
 	public AnimationController(int pInterval) {
@@ -106,8 +106,7 @@ public class AnimationController {
 		if (pAllAnimationFinishedListener != null) {
 			finishedCollector = new AnimationsFinishedCollector(pAnimations.length, pAllAnimationFinishedListener);
 		}
-		for (int i = 0; i < pAnimations.length; i++) {
-			AbstractAnimation animation = pAnimations[i];
+		for (AbstractAnimation animation : pAnimations) {
 			if (finishedCollector != null) {
 				animation.addFinishedListener(finishedCollector);
 			}
@@ -121,8 +120,8 @@ public class AnimationController {
 	 * @param pAnimations The animations.
 	 */
 	public final AnimationController addAnimations(final AbstractAnimation pAnimations[]) {
-		for (int i = 0; i < pAnimations.length; i++) {
-			this.addAnimation(pAnimations[i]);
+		for (AbstractAnimation animation : pAnimations) {
+			this.addAnimation(animation);
 		}
 		return this;
 	}
@@ -132,7 +131,8 @@ public class AnimationController {
 	 * @param pAnimations The animation sequence to add.
 	 * @param pSequenceFinishedListener A listener that gets called if the sequence has ended.
 	 */
-	public final AnimationController addAnimationSequence(final AbstractAnimation[] pAnimations, final AnimationFinishedListener pSequenceFinishedListener) {
+	public final AnimationController addAnimationSequence(final AbstractAnimation[] pAnimations,
+														  final AnimationFinishedListener pSequenceFinishedListener) {
 		if (pAnimations != null && pAnimations.length > 0) {
 			if (pAnimations.length == 1) {
 				addAnimation(pAnimations[0]);
@@ -174,25 +174,15 @@ public class AnimationController {
 		boolean didHandleAnimation = false;
 		synchronized (animations) {
 			for (AbstractAnimation animation : animations) {
-				if (animation.isFinished() && animation.getLoopCount() == 0) {
+				if (animation.isFinished() && animation.getRemainingLoopCount() == 0) {
 					cacheAnimationsToRemove.add(animation);
 				} else {
-					if (animation.isFinished() && animation.getLoopCount() == -1) {
-						animation.start();
-					}
-					if (animation.isFinished() && animation.getLoopCount() > 0) {
-						animation.start();
-						animation.setLoopCount(animation.getLoopCount() - 1);
-					}
-					if (animation.hasStarted()) {
-						animation.update();
-						didHandleAnimation = true;
-					}
+					animation.update();
+					didHandleAnimation = true;
 				}
 			}
 		}
 		for (AbstractAnimation animation : cacheAnimationsToRemove) {
-			animation.onFinish();
 			animation.callAnimationFinishedListeners();
 			animations.remove(animation);
 			if (animations.size() == 0 && allAnimationsFinishedListener != null) {
@@ -242,5 +232,13 @@ public class AnimationController {
 	 */
 	public static float getGlobalAnimationTimeFactor() {
 		return globalAnimationTimeFactor;
+	}
+
+	/**
+	 * Gets the count of the current animations.
+	 * @return The count of animations.
+	 */
+	public int getAnimationCount() {
+		return animations.size();
 	}
 }

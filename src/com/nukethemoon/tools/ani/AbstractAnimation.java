@@ -20,10 +20,14 @@ public abstract class AbstractAnimation {
 
 	private long timeStarted;
 	private int durationMillis;
-	private boolean isLastRenderCallDone = false;
-	private boolean started = false;
 	private long timeElapsedOnPause = -1;
-	private int loopCount = 0;
+
+	private boolean lastUpdateCallDone = false;
+	private boolean started = false;
+
+	private int loopLength = 0;
+	private int loopCount;
+
 
 	/**
 	 * Creates a new instance.
@@ -61,6 +65,12 @@ public abstract class AbstractAnimation {
 	protected abstract void onStart();
 
 	/**
+	 * Use this method to implement logic if a loop starts.
+	 * @param pLoopIndex The index of the current loop.
+	 */
+	protected abstract void onLoopStart(int pLoopIndex);
+
+	/**
 	 * Computes the progress of the animation at the current time.
 	 *
 	 * @return The progress between 0.0 and 1.0
@@ -87,16 +97,16 @@ public abstract class AbstractAnimation {
 
 	/**
 	 * Computes the current animation progress (0.0 - 1.0) and returns it.
-	 * Sets the "isLastRenderCallDone" field to true if a 1.0 progress was computed.
+	 * Sets the "lastUpdateCallDone" field to true if a 1.0 progress was computed.
 	 *
 	 * @return The current animation progress (0.0 - 1.0)
 	 */
 	protected float handleProgress() {
 		float progress = computeProgress();
 		if (progress > 1f) {
-			progress = 1f;
-			if (!this.isLastRenderCallDone) {
-				this.isLastRenderCallDone = true;
+			progress = 1f; // to guarantee progress 1.0 on end.
+			if (!this.lastUpdateCallDone) {
+				this.lastUpdateCallDone = true;
 			}
 		}
 		return progress;
@@ -109,12 +119,18 @@ public abstract class AbstractAnimation {
 	 */
 	public AbstractAnimation start() {
 		if (!hasStarted()) {
-			this.timeStarted = System.currentTimeMillis();
-			started = true;
-			isLastRenderCallDone = false;
+			reset();
+			loopCount = 0;
 			this.onStart();
+			this.onProgress(0.0f); // to guarantee progress 0.0 on start.
+			started = true;
 		}
 		return this;
+	}
+
+	private void reset() {
+		this.timeStarted = System.currentTimeMillis();
+		lastUpdateCallDone = false;
 	}
 
 	/**
@@ -123,7 +139,7 @@ public abstract class AbstractAnimation {
 	 * @return This animation.
 	 */
 	public AbstractAnimation stopLoop() {
-		return setLoopCount(0);
+		return setLoopLength(0);
 	}
 
 	/**
@@ -133,7 +149,7 @@ public abstract class AbstractAnimation {
 	 * @return true if the animation is done.
 	 */
 	public boolean isFinished() {
-		return this.isLastRenderCallDone;
+		return this.lastUpdateCallDone && !isLooping();
 	}
 
 	/**
@@ -161,6 +177,21 @@ public abstract class AbstractAnimation {
 		float progress = handleProgress();
 		if (hasStarted() && !isPaused()) {
 			onProgress(progress);
+			if (lastUpdateCallDone) {
+				if (isLooping()) {
+					// progress ended and new loop
+					reset();
+					loopCount++;
+					onLoopStart(loopCount);
+					return update();
+				} else {
+					// progress ended and not lopping
+					onFinish();
+					loopCount = 0;
+					started = false;
+					return progress;
+				}
+			}
 		}
 		return progress;
 	}
@@ -194,20 +225,20 @@ public abstract class AbstractAnimation {
 	}
 
 	/**
-	 * Gets the loopCount count.
-	 * @return the loopCount count.
+	 * Gets the count of remaining loops.
+	 * @return the count of remaining loops.
 	 */
-	public int getLoopCount() {
-		return loopCount;
+	public int getRemainingLoopCount() {
+		return Math.max(loopLength - loopCount, - 1);
 	}
 
 	/**
-	 * Sets the loopCount count.
-	 * @param pLoopCount The count to loopCount.
+	 * Sets the loopLength count.
+	 * @param pLoopLength The count to loopLength.
 	 * @return This animation.
 	 */
-	public AbstractAnimation setLoopCount(int pLoopCount) {
-		this.loopCount = pLoopCount;
+	public AbstractAnimation setLoopLength(int pLoopLength) {
+		this.loopLength = pLoopLength;
 		return this;
 	}
 
@@ -215,8 +246,13 @@ public abstract class AbstractAnimation {
 	 * Sets an infinite loop for this animation.
 	 * @return This animation.
 	 */
-	public AbstractAnimation setInfiniteLoop() {
-		return setLoopCount(-1);
+	public AbstractAnimation loopInfinite() {
+		return setLoopLength(-1);
+	}
+
+
+	public boolean isLooping() {
+		return getRemainingLoopCount() > 0 || getRemainingLoopCount() == -1;
 	}
 
 	/**

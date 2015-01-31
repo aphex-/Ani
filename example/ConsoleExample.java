@@ -2,6 +2,8 @@ import com.nukethemoon.tools.ani.AbstractAnimation;
 import com.nukethemoon.tools.ani.AnimationController;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
 
+import java.lang.Override;
+
 /**
  * @author luca.hofmann
  */
@@ -22,7 +24,7 @@ public class ConsoleExample {
 			// set the duration of the animation to its parent
 			super(5000, pAnimationFinishedListener);
 			textToPrint = "Hello World!!!";
-			setLoopCount(1);
+			setLoopLength(1);
 		}
 
 		/**
@@ -47,6 +49,11 @@ public class ConsoleExample {
 			// animation starts.
 			textToPrint += "!!";
 			System.out.println("onStart()");
+		}
+
+		@Override
+		public void onLoopStart(int pLoopIndex) {
+			// implementation not needed in this example
 		}
 	}
 
