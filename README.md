@@ -6,7 +6,7 @@ currently under development
 
 If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. It's also a good practice to separate such logic from your productive code.
 
-**Ani** tries to follow the philosophy to do only one little thing but doing it right. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*. You need to override the methods *onStart*, *onProgress* and *onFinish* to implement the animation.
+**Ani** tries to follow the philosophy to 'do just a small thing but do this right'. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*. You need to override the methods *onStart*, *onProgress* and *onFinish* to implement the animation.
 
 ### How to write a custom animation?
 This example shows a custom animation that inherits from *AbstractAnimation*. It simply fades in a Graphic that has a method **setAlpha**.
