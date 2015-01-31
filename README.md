@@ -6,7 +6,7 @@ currently under development
 
 If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. It's also a good practice to separate such logic from your productive code.
 
-**Ani** tries to follow the philosophy to 'do just a small thing but do it right'. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*. You need to override the methods *onStart*, *onProgress* and *onFinish* to implement the animation.
+**Ani** tries to follow the philosophy to 'do just a small thing but do it right'. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*.
 
 ### How to write a custom animation?
 This example shows a custom animation that inherits from **AbstractAnimation**. It simply fades in a Graphic object that has a method called *setAlpha*.
@@ -22,6 +22,12 @@ public static class SimpleFadeAnimation extends AbstractAnimation{
 		super(5000); // sets the duration of 5 sec
 		graphic = pGraphic;
 	}
+	
+	// called once at start
+	@Override
+	public void onStart() {
+		graphic.setAlpha(0.0f); 
+	}
 
 	// called constantly while animating
 	@Override
@@ -34,15 +40,10 @@ public static class SimpleFadeAnimation extends AbstractAnimation{
 	public void onFinish() {
 		graphic.setAlpha(1.0f); 
 	}
-
-	// called once at start
-	@Override
-	public void onStart() {
-		graphic.setAlpha(0.0f); 
-	}
 }
 ```
-This example shows the lifecycle of the animation and the fade in logic. Note that the Graphic object is nothing that comes from **Ani**.
+This example shows the lifecycle methods of the animation and the fade-in logic. Note that the Graphic object is nothing that comes from **Ani**.
+The *onStart* method lets you apply values for the start. Afterwards the *onProgress* method will be called starting with 0.0 as parameter.
 
 
 ## How to start an animation?
