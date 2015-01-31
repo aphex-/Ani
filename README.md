@@ -67,3 +67,31 @@ public static class HelloWorldAnimation extends AbstractAnimation{
 	}
 }
 ```
+
+### The animation lifecycle.
+
+The folowing table shows the function calls of a running animation with 3 loops. The count of the 'onProgress' calls is depending on the update rate of the AnimationController and the duration of the animation.
+
+function call | parameter value
+-------------- | -------
+onStart |
+onProgress | 0.0
+onProgress | 0.36666667
+onProgress | 0.76666665
+onProgress | 1.0
+onLoopStart | 1
+onProgress | 0.0
+onProgress | 0.4
+onProgress | 0.73333335
+onProgress | 1.0
+onLoopStart | 2
+onProgress | 0.0
+onProgress | 0.36666667
+onProgress | 0.76666665
+onProgress | 1.0
+onLoopStart | 3
+onProgress | 0.0
+onProgress | 0.4
+onProgress | 0.76666665
+onProgress | 1.0
+onFinish |
