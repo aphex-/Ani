@@ -1,6 +1,8 @@
 # Ani
 
-## A simple animation library for Java applications.
+currently under development
+
+### A simple animation library for Java applications.
 
 If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is finished. It's also a good practice to separate such logic from your productive code.
 
