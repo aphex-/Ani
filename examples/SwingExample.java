@@ -1,22 +1,27 @@
+import com.nukethemoon.tools.ani.BaseAnimation;
 import javax.swing.*;
 
+/**
+ * This is an example that animates a JFrame from Java Swing.
+ * Simply run the main method.
+ */
 public class SwingExample {
 
 	/**
 	 * Moves an assigned JFrame from startX to endX as a sinus waveform.
 	 */
-	public static class JFrameAnimation extends AbstractAnimation {
+	public static class JFrameAnimation extends BaseAnimation {
 
 		private JFrame frame;
 		private int startX;
 		private int endX;
 
-		private final int y = 200;
+		private final int yPositio = 200;
 		private final int yAmplitude = 20;
 		private final float yFrequence = 5.0f;
 
 		public JFrameAnimation(JFrame pFrame, int pStartX, int pEndX) {
-			super(2000);
+			super(2000); // duration in millisecons
 			frame = pFrame;
 			startX = pStartX;
 			endX = pEndX;
@@ -24,29 +29,17 @@ public class SwingExample {
 
 		@Override
 		protected void onProgress(float pProgress) {
-			startX++;
 			float currentDistance = (float) (endX - startX) * pProgress;
-			frame.setLocation(
-					startX + (int) currentDistance,
-					y + (int) (Math.sin(pProgress * Math.PI * yFrequence) * yAmplitude));
+			int x = startX + (int) currentDistance;
+			int y = y + (int) (Math.sin(pProgress * Math.PI * yFrequence) * yAmplitude);
+			frame.setLocation(x, y);
 		}
 
-		@Override
-		protected void onFinish() {
-			frame.setLocation(endX, y);
-		}
-
-		@Override
-		protected void onStart() {
-			frame.setLocation(startX, y);
-		}
-
-		@Override
-		protected void onLoopStart(int pLoopIndex) {
-
-		}
 	}
 
+	/**
+	 * Initializes the JFrame and the animaiton.
+	 */
 	private static void createAndShowGUI() {
 		// init swing components
 		JFrame frame = new JFrame("Ani Swing Example");
@@ -58,11 +51,15 @@ public class SwingExample {
 		frame.setLocation(10, 55);
 
 		// init animation
-		AnimationController controller = new AnimationController(50);
-		controller.addAnimation(new JFrameAnimation(frame, 100, 400));
+		Ani controller = new Ani(50); // update rate in milliseconds
+		controller.add(new JFrameAnimation(frame, 100, 400));
 
 	}
 
+	/**
+	 * Main entry point.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

@@ -28,25 +28,6 @@ public class ConsoleExample {
 			// print the text using the progress as length.
 			System.out.println(textToPrint.substring(0, (int) (pProgress * textToPrint.length())));
 		}
-
-		@Override
-		public void onFinish() {
-			// animation is finished.
-			textToPrint = null;
-			System.out.println("onFinish()");
-		}
-
-		@Override
-		public void onStart() {
-			// animation starts.
-			textToPrint += "!!";
-			System.out.println("onStart()");
-		}
-
-		@Override
-		public void onLoopStart(int pLoopIndex) {
-			// implementation not needed in this example
-		}
 	}
 
 	public static void main(String[ ] args) {
