@@ -1,7 +1,6 @@
 package com.nukethemoon.tools.ani;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,7 +25,12 @@ public class AnimationController {
 	/**
 	 * A cache of animations to remove.
 	 */
-	private List<AbstractAnimation> cacheAnimationsToRemove;
+	private List<AbstractAnimation> tmpAnimationsToFinish;
+
+
+	private List<AbstractAnimation> tmpAnimationsToAdd;
+
+	private List<AbstractAnimation> tmpAnimationsToRemove;
 
 	private AnimationFinishedListener allAnimationsFinishedListener;
 
@@ -41,8 +45,10 @@ public class AnimationController {
 	 *
 	 */
 	public AnimationController() {
-		animations = Collections.synchronizedList(new ArrayList<AbstractAnimation>());
-		cacheAnimationsToRemove = new ArrayList<AbstractAnimation>();
+		animations = new ArrayList<AbstractAnimation>();
+		tmpAnimationsToFinish = new ArrayList<AbstractAnimation>();
+		tmpAnimationsToAdd = new ArrayList<AbstractAnimation>();
+		tmpAnimationsToRemove = new ArrayList<AbstractAnimation>();
 	}
 
 	/**
@@ -70,7 +76,7 @@ public class AnimationController {
 	 */
 	public final AnimationController addAnimation(final AbstractAnimation pAnimation) {
 		if (pAnimation != null) {
-			animations.add(pAnimation.start());
+			tmpAnimationsToAdd.add(pAnimation.start());
 		}
 		return this;
 	}
@@ -107,7 +113,8 @@ public class AnimationController {
 		}
 		AnimationsFinishedCollector finishedCollector = null;
 		if (pAllAnimationFinishedListener != null) {
-			finishedCollector = new AnimationsFinishedCollector(pAnimations.length, pAllAnimationFinishedListener);
+			finishedCollector = new AnimationsFinishedCollector(pAnimations.length,
+					pAllAnimationFinishedListener);
 		}
 		for (AbstractAnimation animation : pAnimations) {
 			if (finishedCollector != null) {
@@ -178,24 +185,42 @@ public class AnimationController {
 
 	public final boolean updateAnimations() {
 		boolean didHandleAnimation = false;
-		synchronized (animations) {
-			for (AbstractAnimation animation : animations) {
-				if (animation.isFinished() && animation.getRemainingLoopCount() == 0) {
-					cacheAnimationsToRemove.add(animation);
-				} else {
-					animation.update();
-					didHandleAnimation = true;
-				}
+
+		// to avoid concurrent modification
+		if (tmpAnimationsToRemove.size() > 0) {
+			for (AbstractAnimation animation: tmpAnimationsToRemove) {
+				animations.remove(animation);
+			}
+			tmpAnimationsToRemove.clear();
+		}
+
+		// to avoid concurrent modification
+		if (tmpAnimationsToAdd.size() > 0) {
+			for (AbstractAnimation animation: tmpAnimationsToAdd) {
+				animations.add(animation);
+			}
+			tmpAnimationsToAdd.clear();
+		}
+
+		for (AbstractAnimation animation : animations) {
+			if (animation.isFinished() && animation.getRemainingLoopCount() == 0) {
+				tmpAnimationsToFinish.add(animation);
+			} else {
+				animation.update();
+				didHandleAnimation = true;
 			}
 		}
-		for (AbstractAnimation animation : cacheAnimationsToRemove) {
-			animation.callAnimationFinishedListeners();
+
+		// to avoid concurrent modification
+		for (AbstractAnimation animation : tmpAnimationsToFinish) {
 			animations.remove(animation);
+			animation.callAnimationFinishedListeners();
 			if (animations.size() == 0 && allAnimationsFinishedListener != null) {
-				allAnimationsFinishedListener.onAnimationFinished(animation);
+				allAnimationsFinishedListener.onAnimationFinished(null);
 			}
 		}
-		cacheAnimationsToRemove.clear();
+
+		tmpAnimationsToFinish.clear();
 		return didHandleAnimation;
 	}
 
@@ -207,7 +232,7 @@ public class AnimationController {
 	public AnimationController forceStopAnimation(AbstractAnimation pAnimation) {
 		if (pAnimation != null) {
 			pAnimation.onFinish();
-			animations.remove(pAnimation);
+			tmpAnimationsToRemove.add(pAnimation);
 		}
 		return this;
 	}
@@ -242,11 +267,5 @@ public class AnimationController {
 		return globalAnimationTimeFactor;
 	}
 
-	/**
-	 * Gets the count of the current animations.
-	 * @return The count of animations.
-	 */
-	public int getAnimationCount() {
-		return animations.size();
-	}
+
 }

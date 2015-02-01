@@ -60,8 +60,6 @@ public class TestGeneralAnimation {
 		latch.await(100, TimeUnit.MILLISECONDS);
 		assertEquals("Animation did not finish in the expected time.", 0, latch.getCount());
 
-		assertEquals("The animation controller still contains the finished animation",
-				0, controller.getAnimationCount());
 
 		// test if the animation listener was called.
 		assertEquals("The animation finished listener was not called within the " +
