@@ -7,5 +7,4 @@ out
 local.properties
 build/classes/
 build/tmp
-build/docs
 gradle/
