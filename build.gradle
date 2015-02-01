@@ -25,17 +25,14 @@ sourceSets {
 	main {
 		java.srcDir 'src'
 	}
-	unitTest {
+	test {
 		java.srcDir 'test'
+		compileClasspath += sourceSets.main.runtimeClasspath
 	}
 }
 
 
-task unitTest(type:Test, dependsOn: assemble) {
-	description = "UnitTest task"
-	testClassesDir = project.sourceSets.unitTest.output.classesDir
-	classpath = project.sourceSets.unitTest.runtimeClasspath
-}
+
 
 task sourcesJar(type: Jar, dependsOn: classes) {
 	classifier = 'sources'
