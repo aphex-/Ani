@@ -43,6 +43,7 @@ public class TestLifecycle {
 
 		// wait for the animation to finish in the test
 		latch.await(200, TimeUnit.MILLISECONDS);
+		assertEquals("Animation did not finish in the expected time.", 0, latch.getCount());
 
 		assertEquals("The protocol is empty", true, lifecycleProtocol.size() > 0);
 

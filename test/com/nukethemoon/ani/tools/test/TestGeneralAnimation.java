@@ -58,6 +58,7 @@ public class TestGeneralAnimation {
 
 		// wait for the animation to finish
 		latch.await(100, TimeUnit.MILLISECONDS);
+		assertEquals("Animation did not finish in the expected time.", 0, latch.getCount());
 
 		assertEquals("The animation controller still contains the finished animation",
 				0, controller.getAnimationCount());
@@ -112,6 +113,7 @@ public class TestGeneralAnimation {
 				true, testAnimation.isLooping());
 
 		latch.await(250, TimeUnit.MILLISECONDS);
+		assertEquals("Animation did not finish in the expected time.", 0, latch.getCount());
 
 		// count 1.0 values
 		int fullProgressCount = Collections.frequency(animationProgressValues, 1.0f);
@@ -183,6 +185,7 @@ public class TestGeneralAnimation {
 		assertEquals("Animation is finished.", false, animation.isFinished());
 
 		animationLatch.await(animationDurationToTest * 2, TimeUnit.MILLISECONDS);
+		assertEquals("Animation did not finish in the expected time.", 0, animationLatch.getCount());
 
 		long animationTimeMeasured = times.get(1) - times.get(0);
 		long animationTimeExpected = animationDurationToTest + pauseTimeToTest;

@@ -196,7 +196,6 @@ public abstract class AbstractAnimation {
 				} else {
 					// progress ended and not lopping
 					onFinish();
-					loopCount = 0;
 					started = false;
 					return progress;
 				}

@@ -1,3 +1,5 @@
+package com.nukethemoon.tools.ani;
+
 import com.nukethemoon.tools.ani.AbstractAnimation;
 import com.nukethemoon.tools.ani.AnimationController;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
@@ -14,7 +16,6 @@ public class ConsoleExample {
 	 */
 	public static class HelloWorldAnimation extends AbstractAnimation{
 
-		// the text we want to animate
 		private String textToPrint;
 
 		/**
@@ -22,7 +23,7 @@ public class ConsoleExample {
 		 */
 		public HelloWorldAnimation(AnimationFinishedListener pAnimationFinishedListener) {
 			// set the duration of the animation to its parent
-			super(5000, pAnimationFinishedListener);
+			super(1000, pAnimationFinishedListener);
 			textToPrint = "Hello World!!!";
 			setLoopLength(1);
 		}
@@ -57,19 +58,13 @@ public class ConsoleExample {
 		}
 	}
 
-	/**
-	 * Main entry point.
-	 */
 	public static void main(String[ ] args) {
 
-		// Create a animation controller with an update interval of 300 milliseconds.
-		AnimationController animationController = new AnimationController(300);
+		AnimationController animationController = new AnimationController(10);
 
-		// create an instance of our animation.
 		HelloWorldAnimation myAnimation = new HelloWorldAnimation(new AnimationFinishedListener() {
 			@Override
 			public void onAnimationFinished(AbstractAnimation pAnimation) {
-				// Do something after the animation.
 				System.out.println("onAnimationFinished()");
 			}
 		});
