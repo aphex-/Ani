@@ -1,71 +1,79 @@
 # Ani
 
-A simple animation library for Java applications.
+currently under development
 
-This library contains an AbstractAnimation to inherit from. It helps to create animations by providing start, duration, progress and finish functionality. The AnimationController helps to control multiple animations. It can update itself by an interval or by your program (e.g. every render frame).
+### A simple animation library for every purpose.
 
+If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. It's also a good practice to separate such logic from your productive code.
 
-#### How to use the controller
+**Ani** tries to follow the philosophy to 'do just a small thing but do it right'. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*.
+
+### How to write a custom animation?
+This example shows a custom animation that inherits from **AbstractAnimation**. It simply fades in a Graphic object that has a method to *setAlpha*.
 ```java
-// Create an animation controller with an update interval of 300 milliseconds.
-AnimationController animationController = new AnimationController(300);
+/**
+ * An animation to fade in a Graphic.
+ */
+public static class SimpleFadeAnimation extends AbstractAnimation{
+
+	private Graphic graphic;
+
+	public SimpleFadeAnimation(Graphic pGrapic) {
+		super(5000); // sets the duration of 5 sec
+		graphic = pGraphic;
+	}
+	
+	// called once at start
+	@Override
+	public void onStart() {
+		graphic.setAlpha(0.0f); 
+	}
+
+	// called constantly while animating
+	@Override
+	public void onProgress(float pProgress) {
+		graphic.setAlpha(pProgress) // progress from 0.0 to 1.0
+	}
+
+	// called once at the end
+	@Override
+	public void onFinish() {
+		graphic.setAlpha(1.0f); 
+	}
+}
+```
+This example shows the lifecycle methods of the animation and the fade-in logic. Note that the Graphic object is nothing that comes from **Ani**.
+
+The *onStart* method will be called on start. <br>
+The *onProgress* method will be called constantly until the duration of the animation is elapsed. The parameter value starts with 0.0 and ends with 1.0.<br>
+The *onFinish* method will be called on the end. 
+
+
+## How to start an animation?
+To run your animation simply create an instance of it, create an **AnimationController** and add the animation to the controller.
+```java
+// Create an animation controller with an update interval of 30 milliseconds.
+AnimationController animationController = new AnimationController(30);
 
 // Create an instance of our animation.
-HelloWorldAnimation myAnimation = new HelloWorldAnimation(new AnimationFinishedListener() {
-	@Override
-	public void onAnimationFinished() {
-		// Do something after the animation.
-		System.out.println("onAnimationFinished()");
-	}
-});
+SimpleFadeAnimation myAnimation = new SimpleFadeAnimation(myGraphic);
 
 // Add the animation.
 animationController.addAnimation(myAnimation);
 ```
+The animation controller is reusable and should not be created for every animation. It can handle multiple animations at once.
 
-#### How to write a custom animation.
-```java
-/**
- * An animation that inherits form AbstractAnimation and animates "Hello World" to the console.
- */
-public static class HelloWorldAnimation extends AbstractAnimation{
+## How to get noticed if the animation has finished?
+To implement logic that should be executed after the animation you can simply use the **AnimationFinishedListener**.
+```
+SimpleFadeAnimation myAnimation = new SimpleFadeAnimation(myGraphic);
 
-	// the text we want to animate
-	private String textToPrint;
-
-	/**
-	 * The Hello World animation.
-	 */
-	public HelloWorldAnimation(AnimationFinishedListener pAnimationFinishedListener) {
-		// set the duration of the animation to its parent
-		super(5000, pAnimationFinishedListener);
-		textToPrint = "Hello World!!!";
-	}
-
-	/**
-	 * Implement what should happen while animating.
-	 * @param pProgress The progress of the animation.
-	 */
-	@Override
-	public void onProgress(float pProgress) {
-		// print the text using the progress as length.
-		System.out.println(textToPrint.substring(0, (int) (pProgress * textToPrint.length())));
-	}
-
-	@Override
-	public void onFinish() {
-		// animation is finished.
-		textToPrint = null;
-		System.out.println("onFinish()");
-	}
-
-	@Override
-	public void onStart() {
-		// animation starts.
-		textToPrint += "!!";
-		System.out.println("onStart()");
-	}
-}
+myAnimation.addFinishedListener(new AnimationFinishedListener() {
+		@Override
+		public void onAnimationFinished(AbstractAnimation pAnimation) {
+			// add your code here
+		}
+	});
 ```
 
 ### The animation lifecycle.
@@ -103,3 +111,28 @@ onProgress | 0.76666665
 onProgress | 1.0
  | 
 onFinish |
+
+### Licence
+```
+The MIT License (MIT)
+
+Copyright (c) 2014 Luca Hofmann
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
