@@ -72,12 +72,17 @@ public abstract class AbstractAnimation {
 	 * @return The progress between 0.0 and 1.0
 	 */
 	protected float computeProgress() {
-		float timeSinceStart = (float) (System.currentTimeMillis() - this.timeStarted);
+		long tmpTimeStarted;
+		if (isPaused()) {
+			tmpTimeStarted = (System.currentTimeMillis() - timeElapsedOnPause);
+		} else {
+			tmpTimeStarted = timeStarted;
+		}
+		float timeSinceStart = (float) (System.currentTimeMillis() - tmpTimeStarted);
 		float duration = (float) this.durationMillis * AnimationController.getGlobalAnimationTimeFactor();
-		System.out.println("computeProgress TimeSinceStart " + Float.toString(timeSinceStart));
-
 		return timeSinceStart / duration;
 	}
+
 
 	/**
 	 * Computes the progress of the progress within the limit os start and end.
@@ -103,7 +108,6 @@ public abstract class AbstractAnimation {
 	protected float handleProgress() {
 		float progress = computeProgress();
 		if (progress > 1f) {
-			System.out.println("handle progress last call!");
 			progress = 1f; // to guarantee progress 1.0 on end.
 			if (!this.lastUpdateCallDone) {
 				this.lastUpdateCallDone = true;
@@ -174,24 +178,27 @@ public abstract class AbstractAnimation {
 	 * @return The current progress.
 	 */
 	public float update() {
-		if (hasStarted()) {
+
+		if (hasStarted() && isPaused()) {
+			return computeProgress();
+		}
+
+		if (hasStarted() && !isPaused()) {
 			float progress = handleProgress();
-			if (!isPaused()) {
-				onProgress(progress);
-				if (lastUpdateCallDone) {
-					if (isLooping()) {
-						// progress ended and new loop
-						reset();
-						loopCount++;
-						onLoopStart(loopCount);
-						return update();
-					} else {
-						// progress ended and not lopping
-						onFinish();
-						loopCount = 0;
-						started = false;
-						return progress;
-					}
+			onProgress(progress);
+			if (lastUpdateCallDone) {
+				if (isLooping()) {
+					// progress ended and new loop
+					reset();
+					loopCount++;
+					onLoopStart(loopCount);
+					return update();
+				} else {
+					// progress ended and not lopping
+					onFinish();
+					loopCount = 0;
+					started = false;
+					return progress;
 				}
 			}
 			return progress;
@@ -263,9 +270,8 @@ public abstract class AbstractAnimation {
 	 * @return This animation.
 	 */
 	public AbstractAnimation pause() {
-		if (hasStarted()) {
+		if (hasStarted() && !isPaused()) {
 			timeElapsedOnPause = (System.currentTimeMillis() - timeStarted);
-			System.out.println("pause timeElapsed " + Long.toString(timeElapsedOnPause));
 			if (timeElapsedOnPause < 0) {
 				timeElapsedOnPause = 0;
 			}
@@ -280,7 +286,6 @@ public abstract class AbstractAnimation {
 	public AbstractAnimation resume() {
 		if (hasStarted() && isPaused()) {
 			timeStarted = (System.currentTimeMillis() - timeElapsedOnPause);
-			System.out.println("resume timeStarted " + Long.toString(timeStarted));
 			timeElapsedOnPause = - 1;
 		}
 		return this;
@@ -291,7 +296,6 @@ public abstract class AbstractAnimation {
 	 * @return true if this animation is paused.
 	 */
 	public boolean isPaused() {
-		//System.out.println("paused " + Boolean.toString(timeElapsedOnPause >= 0));
 		return timeElapsedOnPause >= 0;
 	}
 }
