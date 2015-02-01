@@ -2,14 +2,14 @@
 
 currently under development
 
-### A simple animation library for Java applications.
+### A simple animation library for every purpose.
 
 If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. It's also a good practice to separate such logic from your productive code.
 
 **Ani** tries to follow the philosophy to 'do just a small thing but do it right'. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*.
 
 ### How to write a custom animation?
-This example shows a custom animation that inherits from **AbstractAnimation**. It simply fades in a Graphic object that has a method called *setAlpha*.
+This example shows a custom animation that inherits from **AbstractAnimation**. It simply fades in a Graphic object that has a method to *setAlpha*.
 ```java
 /**
  * An animation to fade in a Graphic.
@@ -43,7 +43,10 @@ public static class SimpleFadeAnimation extends AbstractAnimation{
 }
 ```
 This example shows the lifecycle methods of the animation and the fade-in logic. Note that the Graphic object is nothing that comes from **Ani**.
-The *onStart* method lets you apply values for the start. Afterwards the *onProgress* method will be called starting with 0.0 as parameter.
+
+The *onStart* method will be called on start. <br>
+The *onProgress* method will be called constantly until the duration of the animation is elapsed. The parameter value starts with 0.0 and ends with 1.0.<br>
+The *onFinish* method will be called on the end. 
 
 
 ## How to start an animation?
@@ -62,7 +65,19 @@ The animation controller is reusable and should not be created for every animati
 
 ## How to get noticed if the animation has finished?
 To implement logic that should be executed after the animation you can simply use the **AnimationFinishedListener**.
+```
+SimpleFadeAnimation myAnimation = new SimpleFadeAnimation(myGraphic);
 
+myAnimation.addFinishedListener(new AnimationFinishedListener() {
+		@Override
+		public void onAnimationFinished(AbstractAnimation pAnimation) {
+			// add your code here
+		}
+	});
+	
+
+
+```
 
 ### The animation lifecycle.
 
