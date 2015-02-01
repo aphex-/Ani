@@ -1,10 +1,10 @@
 package com.nukethemoon.ani.tools.test.animation;
 
 
-import com.nukethemoon.tools.ani.AbstractAnimation;
+import com.nukethemoon.tools.ani.BaseAnimation;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
 
-public class TestAnimation extends AbstractAnimation {
+public class TestAnimation extends BaseAnimation {
 
 	public TestAnimation(int pDuration, AnimationFinishedListener pListener) {
 		super(pDuration, pListener);

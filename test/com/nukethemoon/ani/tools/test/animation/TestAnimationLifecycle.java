@@ -1,6 +1,6 @@
 package com.nukethemoon.ani.tools.test.animation;
 
-import com.nukethemoon.tools.ani.AbstractAnimation;
+import com.nukethemoon.tools.ani.BaseAnimation;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
 
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * NukeTheMoon
  */
-public class TestAnimationLifecycle extends AbstractAnimation {
+public class TestAnimationLifecycle extends BaseAnimation {
 
 	private List<String> lifecycleProtocol;
 

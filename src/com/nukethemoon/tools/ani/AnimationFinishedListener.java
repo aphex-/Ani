@@ -10,5 +10,5 @@ public interface AnimationFinishedListener {
 	 * Callable on animation finished.
 	 * @param pAnimation The finished animation.
 	 */
-	void onAnimationFinished(AbstractAnimation pAnimation);
+	void onAnimationFinished(BaseAnimation pAnimation);
 }

@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @author lucahofmann@gmx.net
  */
-public abstract class AbstractAnimation {
+public abstract class BaseAnimation {
 
 	private List<AnimationFinishedListener> finishedListenersList;
 	private AnimationFinishedListener finishedListener; // to avoid instance creation if only one listener is used.
@@ -30,7 +30,7 @@ public abstract class AbstractAnimation {
 	 *
 	 * @param pDurationMillis The duration of the animation in milliseconds.
 	 */
-	public AbstractAnimation(int pDurationMillis) {
+	public BaseAnimation(int pDurationMillis) {
 		this(pDurationMillis, null);
 	}
 
@@ -39,7 +39,7 @@ public abstract class AbstractAnimation {
 	 * @param pDurationMillis The duration of the animation in milliseconds.
 	 * @param pAnimationFinishedListener The finished listener.
 	 */
-	public AbstractAnimation(int pDurationMillis, AnimationFinishedListener pAnimationFinishedListener) {
+	public BaseAnimation(int pDurationMillis, AnimationFinishedListener pAnimationFinishedListener) {
 		this.durationMillis = pDurationMillis;
 		addFinishedListener(pAnimationFinishedListener);
 	}
@@ -53,18 +53,18 @@ public abstract class AbstractAnimation {
 	/**
 	 * Implement this method to apply the finish of the animation.
 	 */
-	protected abstract void onFinish();
+	protected void onFinish() {}
 
 	/**
 	 * Implement this method to apply the start of the animation.
 	 */
-	protected abstract void onStart();
+	protected void onStart() {}
 
 	/**
 	 * Use this method to implement logic if a loop starts.
 	 * @param pLoopIndex The index of the current loop.
 	 */
-	protected abstract void onLoopStart(int pLoopIndex);
+	protected void onLoopStart(int pLoopIndex) {}
 
 	/**
 	 * Computes the progress of the animation at the current time.
@@ -79,7 +79,7 @@ public abstract class AbstractAnimation {
 			tmpTimeStarted = timeStarted;
 		}
 		float timeSinceStart = (float) (System.currentTimeMillis() - tmpTimeStarted);
-		float duration = (float) this.durationMillis * AnimationController.getGlobalAnimationTimeFactor();
+		float duration = (float) this.durationMillis * Ani.getGlobalTimeFactor();
 		return timeSinceStart / duration;
 	}
 
@@ -121,7 +121,7 @@ public abstract class AbstractAnimation {
 	 *
 	 * @return This animation.
 	 */
-	public AbstractAnimation start() {
+	public BaseAnimation start() {
 		if (!hasStarted()) {
 			reset();
 			loopCount = 0;
@@ -142,7 +142,7 @@ public abstract class AbstractAnimation {
 	 *
 	 * @return This animation.
 	 */
-	public AbstractAnimation stopLoop() {
+	public BaseAnimation stopLoop() {
 		return setLoopLength(0);
 	}
 
@@ -210,7 +210,7 @@ public abstract class AbstractAnimation {
 	 * @param pAnimationFinishedListener A listener that gets called if the animation is finished.
 	 * @return This animation.
 	 */
-	public AbstractAnimation addFinishedListener(AnimationFinishedListener pAnimationFinishedListener) {
+	public BaseAnimation addFinishedListener(AnimationFinishedListener pAnimationFinishedListener) {
 		if (pAnimationFinishedListener != null) {
 			if (finishedListener == null) {
 				finishedListener = pAnimationFinishedListener;
@@ -246,7 +246,7 @@ public abstract class AbstractAnimation {
 	 * @param pLoopLength The count to loopLength.
 	 * @return This animation.
 	 */
-	public AbstractAnimation setLoopLength(int pLoopLength) {
+	public BaseAnimation setLoopLength(int pLoopLength) {
 		this.loopLength = pLoopLength;
 		return this;
 	}
@@ -255,7 +255,7 @@ public abstract class AbstractAnimation {
 	 * Sets an infinite loop for this animation.
 	 * @return This animation.
 	 */
-	public AbstractAnimation loopInfinite() {
+	public BaseAnimation loopInfinite() {
 		return setLoopLength(-1);
 	}
 
@@ -268,7 +268,7 @@ public abstract class AbstractAnimation {
 	 * Pause the animation.
 	 * @return This animation.
 	 */
-	public AbstractAnimation pause() {
+	public BaseAnimation pause() {
 		if (hasStarted() && !isPaused()) {
 			timeElapsedOnPause = (System.currentTimeMillis() - timeStarted);
 			if (timeElapsedOnPause < 0) {
@@ -282,7 +282,7 @@ public abstract class AbstractAnimation {
 	 * Resumes the animation if it is paused.
 	 * @return This animation.
 	 */
-	public AbstractAnimation resume() {
+	public BaseAnimation resume() {
 		if (hasStarted() && isPaused()) {
 			timeStarted = (System.currentTimeMillis() - timeElapsedOnPause);
 			timeElapsedOnPause = - 1;

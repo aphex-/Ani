@@ -2,8 +2,8 @@ package com.nukethemoon.ani.tools.test;
 
 import com.nukethemoon.ani.tools.test.animation.TestAnimation;
 import com.nukethemoon.ani.tools.test.animation.TestAnimationLoops;
-import com.nukethemoon.tools.ani.AbstractAnimation;
-import com.nukethemoon.tools.ani.AnimationController;
+import com.nukethemoon.tools.ani.BaseAnimation;
+import com.nukethemoon.tools.ani.Ani;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
 import org.junit.Test;
 
@@ -29,7 +29,7 @@ public class TestGeneralAnimation {
 		// you may need to increase the tolerance depending on your CPU performance
 		int differenceTolerance = 5;
 
-		final AnimationController controller = new AnimationController(1);
+		final Ani controller = new Ani(1);
 
 		// take the start time
 		final List<Long> times = new ArrayList<>();
@@ -37,7 +37,7 @@ public class TestGeneralAnimation {
 
 		TestAnimation testAnimation = new TestAnimation(animationDuration, new AnimationFinishedListener() {
 			@Override
-			public void onAnimationFinished(AbstractAnimation pAnimation) {
+			public void onAnimationFinished(BaseAnimation pAnimation) {
 
 				// test if the animation is finished.
 				assertEquals("The animation isFinished method did return false " +
@@ -54,7 +54,7 @@ public class TestGeneralAnimation {
 
 
 		// start the animation
-		controller.addAnimation(testAnimation);
+		controller.add(testAnimation);
 
 		// wait for the animation to finish
 		latch.await(100, TimeUnit.MILLISECONDS);
@@ -79,7 +79,7 @@ public class TestGeneralAnimation {
 	 */
 	@Test
 	public void testLoops() throws InterruptedException {
-		AnimationController animationController = new AnimationController(2);
+		Ani ani = new Ani(2);
 		final CountDownLatch latch = new CountDownLatch(1);
 
 		int loopCountToTest = 3;
@@ -89,7 +89,7 @@ public class TestGeneralAnimation {
 
 		AnimationFinishedListener listener = new AnimationFinishedListener() {
 			@Override
-			public void onAnimationFinished(AbstractAnimation pAnimation) {
+			public void onAnimationFinished(BaseAnimation pAnimation) {
 
 				assertEquals("Animation is still in state 'looping' on finished.",
 						false, pAnimation.isLooping());
@@ -105,7 +105,7 @@ public class TestGeneralAnimation {
 				50, animationProgressValues, animationLoopIndexList, listener);
 
 		testAnimation.setLoopLength(loopCountToTest);
-		animationController.addAnimation(testAnimation);
+		ani.add(testAnimation);
 
 		assertEquals("Animation is not looping after adding to the controller.",
 				true, testAnimation.isLooping());
@@ -143,7 +143,7 @@ public class TestGeneralAnimation {
 		int animationDurationTolerance = 20;
 		float progressDifferenceTolerance = 0.008f;
 
-		AnimationController controller = new AnimationController(3);
+		Ani controller = new Ani(3);
 		Timer timer = new Timer();
 
 		final CountDownLatch animationLatch = new CountDownLatch(1);
@@ -154,13 +154,13 @@ public class TestGeneralAnimation {
 		TestAnimation animation = new TestAnimation(animationDurationToTest,
 				new AnimationFinishedListener() {
 			@Override
-			public void onAnimationFinished(AbstractAnimation pAnimation) {
+			public void onAnimationFinished(BaseAnimation pAnimation) {
 				times.add(System.currentTimeMillis());
 				animationLatch.countDown();
 			}
 		});
 
-		controller.addAnimation(animation);
+		controller.add(animation);
 		wait(pauseTimeToTest, timer); // animation is running
 
 		assertProgress(animation, pauseTimeToTest,
@@ -199,7 +199,7 @@ public class TestGeneralAnimation {
 
 	}
 
-	private void assertProgress(AbstractAnimation pAnimation, float pauseTime,
+	private void assertProgress(BaseAnimation pAnimation, float pauseTime,
 								float pAnimationDuration, float pTolerance) {
 		float currentProgress = pAnimation.update();
 		float expectedProgress = (pauseTime / pAnimationDuration);

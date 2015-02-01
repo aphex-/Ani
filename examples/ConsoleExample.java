@@ -1,5 +1,5 @@
-import com.nukethemoon.tools.ani.AbstractAnimation;
-import com.nukethemoon.tools.ani.AnimationController;
+import com.nukethemoon.tools.ani.BaseAnimation;
+import com.nukethemoon.tools.ani.Ani;
 import com.nukethemoon.tools.ani.AnimationFinishedListener;
 
 import java.lang.Override;
@@ -12,7 +12,7 @@ public class ConsoleExample {
 	/**
 	 * Animates "Hello World" to the console.
 	 */
-	public static class HelloWorldAnimation extends AbstractAnimation{
+	public static class HelloWorldAnimation extends BaseAnimation {
 
 		private String textToPrint;
 
@@ -50,14 +50,14 @@ public class ConsoleExample {
 	}
 
 	public static void main(String[ ] args) {
-		AnimationController animationController = new AnimationController(10);
+		Ani ani = new Ani(10);
 		HelloWorldAnimation myAnimation = new HelloWorldAnimation(new AnimationFinishedListener() {
 			@Override
-			public void onAnimationFinished(AbstractAnimation pAnimation) {
+			public void onAnimationFinished(BaseAnimation pAnimation) {
 				System.out.println("onAnimationFinished()");
 			}
 		});
 		// add the animation
-		animationController.addAnimation(myAnimation);
+		ani.add(myAnimation);
 	}
 }
