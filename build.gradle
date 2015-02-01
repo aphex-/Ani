@@ -46,3 +46,11 @@ artifacts {
 	archives sourcesJar
 	archives javadocJar
 }
+
+uploadArchives {
+	repositories {
+		flatDir {
+			dirs 'build/jar'
+		}
+	}
+}
