@@ -66,6 +66,7 @@ public class AnimationController {
 	 * Adds an animation.
 	 *
 	 * @param pAnimation The animation to add.
+	 * @return This instance.
 	 */
 	public final AnimationController addAnimation(final AbstractAnimation pAnimation) {
 		if (pAnimation != null) {
@@ -79,6 +80,7 @@ public class AnimationController {
 	 *
 	 * @param pStartDelayMillis A delay to start the animation in milliseconds.
 	 * @param pAnimation The animation to add.
+	 * @return This instance.
 	 */
 	public final AnimationController addAnimation(final int pStartDelayMillis, final AbstractAnimation pAnimation) {
 		new java.util.Timer().schedule(
@@ -97,6 +99,7 @@ public class AnimationController {
 	 * Adds multiple animations and a listener to fall if all are finished.
 	 * @param pAnimations The animations.
 	 * @param pAllAnimationFinishedListener The listener to call is all animations are finished.
+	 * @return This instance.
 	 */
 	public final AnimationController addAnimations(final AbstractAnimation pAnimations[], final AnimationFinishedListener pAllAnimationFinishedListener) {
 		if (pAnimations == null || pAnimations.length == 0) {
@@ -118,6 +121,7 @@ public class AnimationController {
 	/**
 	 * Adds multiple animations.
 	 * @param pAnimations The animations.
+	 * @return This instance.
 	 */
 	public final AnimationController addAnimations(final AbstractAnimation pAnimations[]) {
 		for (AbstractAnimation animation : pAnimations) {
@@ -130,6 +134,7 @@ public class AnimationController {
 	 * Adds a sequence of animations that will be added one after another.
 	 * @param pAnimations The animation sequence to add.
 	 * @param pSequenceFinishedListener A listener that gets called if the sequence has ended.
+	 * @return This instance.
 	 */
 	public final AnimationController addAnimationSequence(final AbstractAnimation[] pAnimations,
 														  final AnimationFinishedListener pSequenceFinishedListener) {
@@ -157,6 +162,7 @@ public class AnimationController {
 	/**
 	 * Adds a sequence of animations that will be added one after another.
 	 * @param pAnimations The animation sequence to add.
+	 * @return This instance.
 	 */
 	public final AnimationController addAnimationSequence(final AbstractAnimation[] pAnimations) {
 		addAnimationSequence(pAnimations, null);
@@ -196,6 +202,7 @@ public class AnimationController {
 	/**
 	 * Stops the assigned animation.
 	 * @param pAnimation The animation to stop.
+	 * @return This instance.
 	 */
 	public AnimationController forceStopAnimation(AbstractAnimation pAnimation) {
 		if (pAnimation != null) {
@@ -208,6 +215,7 @@ public class AnimationController {
 	/**
 	 * Sets a listener that will be called if all animations of this controller are finished.
 	 * @param pListener The listener to call.
+	 * @return This instance.
 	 */
 	public AnimationController setAllAnimationFinishedListener(AnimationFinishedListener pListener) {
 		allAnimationsFinishedListener =  pListener;

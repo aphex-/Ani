@@ -8,6 +8,7 @@ package com.nukethemoon.tools.ani;
 public interface AnimationFinishedListener {
 	/**
 	 * Callable on animation finished.
+	 * @param pAnimation The finished animation.
 	 */
 	void onAnimationFinished(AbstractAnimation pAnimation);
 }
