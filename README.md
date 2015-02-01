@@ -4,7 +4,9 @@ currently under development
 
 ### A simple animation library for every purpose.
 
-If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. It's also a good practice to separate such logic from your productive code. **Ani** helps you to focus on the animation logic. Just write your own animation class and inerhit from *BaseAnimation*.
+If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. Beside that it's a good practice to separate such logic from your productive code. **Ani** does that for you and helps focusing on the animation logic itself. Just write your own animation class and inerhit from *BaseAnimation*.
+
+**Ani** is a simple tool that does not depend on complex libraries. You can use it in combination with other technologies like **LibGDX**, **Swing** or the **Android SDK** etc.
 
 You can find the **jar** at *build/jar*. Also take a look at the **examples**.
 
