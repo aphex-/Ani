@@ -1,7 +1,12 @@
 apply plugin: 'java'
 apply plugin: 'maven'
 
-version = '1.0.2'
+version = '1.0.0'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
 
 dependencies {
 	testCompile group: 'junit', name: 'junit', version: '4.11'
@@ -25,8 +30,9 @@ sourceSets {
 	}
 }
 
+
 task unitTest(type:Test, dependsOn: assemble) {
-	description = "Unit tests run task"
+	description = "UnitTest task"
 	testClassesDir = project.sourceSets.unitTest.output.classesDir
 	classpath = project.sourceSets.unitTest.runtimeClasspath
 }
