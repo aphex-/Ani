@@ -4,13 +4,13 @@
 
 If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. Beside that it's a good practice to separate such logic from your productive code. **Ani** does that for you and helps focusing on the animation logic itself. Just write your own animation class and extend <a href="https://github.com/aphex-/Ani/blob/master/src/com/nukethemoon/tools/ani/BaseAnimation.java">BaseAnimation</a>.
 
-**Ani** is a simple tool that does not depend on other libraries. You can use it in combination with technologies like **LibGDX**, **Swing** or the **Android SDK** etc.
+**Ani** is a simple tool that does not depend on other libraries. You can use it in combination with technologies like <a href="http://libgdx.badlogicgames.com/">libGDX</a>, **Swing** or the **Android SDK** etc.
 
 You can find the **jar** at <a href="https://github.com/aphex-/Ani/tree/master/build/jar">build/jar/</a><br>
 Also take a look at the <a href="https://github.com/aphex-/Ani/tree/master/examples">examples</a>.
 
 ### How to write a custom animation?
-This example shows a custom animation that extends <a href="https://github.com/aphex-/Ani/blob/master/src/com/nukethemoon/tools/ani/BaseAnimation.java">BaseAnimation</a>. It simply fades in a Graphic object that has a method to *setAlpha*. Note that the Graphic object is nothing that comes from **Ani**.
+This example shows a custom animation that extends <a href="https://github.com/aphex-/Ani/blob/master/src/com/nukethemoon/tools/ani/BaseAnimation.java">BaseAnimation</a>. It simply fades in a Graphic object that has a method to *setAlpha*. (Note that the Graphic object is nothing that comes from **Ani**)
 ```java
 /**
  * An animation to fade in a Graphic.
@@ -32,7 +32,7 @@ public static class SimpleFadeAnimation extends BaseAnimation {
 }
 ```
 
-The *onProgress* method will be called constantly until the animation is finished. The parameter value starts with 0.0 and ends with 1.0. You can also override lifecycle methods like *onStart* and *onFinish*.
+The **onProgress** method will be called constantly until the animation is finished. The parameter value starts with 0.0 and ends with 1.0. You can also override lifecycle methods like *onStart* and *onFinish*.
  
 
 ## How to start an animation?
