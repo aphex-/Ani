@@ -4,17 +4,19 @@ currently under development
 
 ### A simple animation library for every purpose.
 
-If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. It's also a good practice to separate such logic from your productive code.
+If you want to write an animmation you usually need something like an **update** method where you apply a **progress** to the stuff you want to animate. In most cases you also want to get noticed if the animation is **finished**. Beside that it's a good practice to separate such logic from your productive code. **Ani** does that for you and helps focusing on the animation logic itself. Just write your own animation class and inerhit from *BaseAnimation*.
 
-**Ani** tries to follow the philosophy to 'do just a small thing but do it right'. It helps you to focus on the animation logic itself. Just write your own animation class and inerhit from *AbstractAnimation*.
+**Ani** is a simple tool that does not depend on complex libraries. You can use it in combination with other technologies like **LibGDX**, **Swing** or the **Android SDK** etc.
+
+You can find the **jar** at *build/jar*. Also take a look at the **examples**.
 
 ### How to write a custom animation?
-This example shows a custom animation that inherits from **AbstractAnimation**. It simply fades in a Graphic object that has a method to *setAlpha*.
+This example shows a custom animation that inherits from **BaseAnimation**. It simply fades in a Graphic object that has a method to *setAlpha*.
 ```java
 /**
  * An animation to fade in a Graphic.
  */
-public static class SimpleFadeAnimation extends AbstractAnimation{
+public static class SimpleFadeAnimation extends BaseAnimation {
 
 	private Graphic graphic;
 
@@ -22,46 +24,33 @@ public static class SimpleFadeAnimation extends AbstractAnimation{
 		super(5000); // sets the duration of 5 sec
 		graphic = pGraphic;
 	}
-	
-	// called once at start
-	@Override
-	public void onStart() {
-		graphic.setAlpha(0.0f); 
-	}
 
 	// called constantly while animating
 	@Override
 	public void onProgress(float pProgress) {
 		graphic.setAlpha(pProgress) // progress from 0.0 to 1.0
 	}
-
-	// called once at the end
-	@Override
-	public void onFinish() {
-		graphic.setAlpha(1.0f); 
-	}
 }
 ```
-This example shows the lifecycle methods of the animation and the fade-in logic. Note that the Graphic object is nothing that comes from **Ani**.
+ Note that the Graphic object is nothing that comes from **Ani**.
 
-The *onStart* method will be called on start. <br>
-The *onProgress* method will be called constantly until the duration of the animation is elapsed. The parameter value starts with 0.0 and ends with 1.0.<br>
-The *onFinish* method will be called on the end. 
 
+The *onProgress* method will be called constantly until the duration of the animation is elapsed. The parameter value starts with 0.0 and ends with 1.0. You can also override lifecycle methods like *onStart* and *onFinish*.
+ 
 
 ## How to start an animation?
-To run your animation simply create an instance of it, create an **AnimationController** and add the animation to the controller.
+To run your animation simply create an instance of it, create an instnace of **Ani** and add the animation to the **Ani**.
 ```java
 // Create an animation controller with an update interval of 30 milliseconds.
-AnimationController animationController = new AnimationController(30);
+Ani ani = new Ani(30);
 
 // Create an instance of our animation.
 SimpleFadeAnimation myAnimation = new SimpleFadeAnimation(myGraphic);
 
 // Add the animation.
-animationController.addAnimation(myAnimation);
+ani.add(myAnimation);
 ```
-The animation controller is reusable and should not be created for every animation. It can handle multiple animations at once.
+The animation controller **Ani** is reusable and should not be created for every animation. It can handle multiple animations at once.
 
 ## How to get noticed if the animation has finished?
 To implement logic that should be executed after the animation you can simply use the **AnimationFinishedListener**.
