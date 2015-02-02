@@ -32,7 +32,7 @@ public class TestGeneralAnimation {
 		final Ani controller = new Ani(1);
 
 		// take the start time
-		final List<Long> times = new ArrayList<>();
+		final List<Long> times = new ArrayList<Long>();
 		times.add(System.currentTimeMillis());
 
 		TestAnimation testAnimation = new TestAnimation(animationDuration, new AnimationFinishedListener() {
@@ -84,8 +84,8 @@ public class TestGeneralAnimation {
 
 		int loopCountToTest = 3;
 
-		final List<Float> animationProgressValues = new ArrayList<>();
-		final List<Integer> animationLoopIndexList = new ArrayList<>();
+		final List<Float> animationProgressValues = new ArrayList<Float>();
+		final List<Integer> animationLoopIndexList = new ArrayList<Integer>();
 
 		AnimationFinishedListener listener = new AnimationFinishedListener() {
 			@Override
@@ -147,7 +147,7 @@ public class TestGeneralAnimation {
 		Timer timer = new Timer();
 
 		final CountDownLatch animationLatch = new CountDownLatch(1);
-		final List<Long> times = new ArrayList<>();
+		final List<Long> times = new ArrayList<Long>();
 
 		times.add(System.currentTimeMillis());
 

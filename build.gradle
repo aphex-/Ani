@@ -4,6 +4,10 @@ apply plugin: 'maven-publish'
 version = '1.0.0'
 group = 'com.nukethemoon.ani'
 
+tasks.withType(JavaCompile) {
+	sourceCompatibility = "1.6"
+	targetCompatibility = "1.6"
+}
 
 repositories {
 	mavenLocal()
