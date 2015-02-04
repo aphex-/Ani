@@ -5,8 +5,8 @@ version = '1.0.0'
 group = 'com.nukethemoon.ani'
 
 tasks.withType(JavaCompile) {
-	sourceCompatibility = "1.6"
-	targetCompatibility = "1.6"
+	sourceCompatibility = "1.7"
+	targetCompatibility = "1.7"
 }
 
 repositories {
@@ -24,6 +24,8 @@ jar {
 		attributes 'Implementation-Title': 'Ani Animation Library',
 				'Implementation-Version': version
 	}
+	exclude 'examples/**'
+	exclude 'test/**'
 }
 
 sourceSets {
