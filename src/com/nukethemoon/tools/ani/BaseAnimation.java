@@ -11,8 +11,8 @@ import java.util.List;
  */
 public abstract class BaseAnimation {
 
-	private List<AnimationFinishedListener> finishedListenersList;
-	private AnimationFinishedListener finishedListener; // to avoid instance creation if only one listener is used.
+	protected List<AnimationFinishedListener> finishedListenersList;
+	protected AnimationFinishedListener finishedListener; // to avoid instance creation if only one listener is used.
 
 	private long timeStarted;
 	private int durationMillis;

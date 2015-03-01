@@ -2,6 +2,7 @@ package com.nukethemoon.tools.ani;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -188,7 +189,9 @@ public class Ani {
 
 		// to avoid concurrent modification
 		if (tmpAnimationsToRemove.size() > 0) {
-			for (BaseAnimation animation: tmpAnimationsToRemove) {
+			ListIterator<BaseAnimation> iterator = tmpAnimationsToRemove.listIterator();
+			while (iterator.hasNext()) {
+				BaseAnimation animation = iterator.next();
 				animations.remove(animation);
 			}
 			tmpAnimationsToRemove.clear();
@@ -196,31 +199,41 @@ public class Ani {
 
 		// to avoid concurrent modification
 		if (tmpAnimationsToAdd.size() > 0) {
-			for (BaseAnimation animation: tmpAnimationsToAdd) {
+			ListIterator<BaseAnimation> iterator = tmpAnimationsToAdd.listIterator();
+			while (iterator.hasNext()) {
+				BaseAnimation animation = iterator.next();
 				animations.add(animation);
 			}
 			tmpAnimationsToAdd.clear();
 		}
 
-		for (BaseAnimation animation : animations) {
-			if (animation.isFinished() && animation.getRemainingLoopCount() == 0) {
-				tmpAnimationsToFinish.add(animation);
-			} else {
-				animation.update();
-				didHandleAnimation = true;
+		if (animations.size() > 0) {
+			ListIterator<BaseAnimation> iterator = animations.listIterator();
+			while (iterator.hasNext()) {
+				BaseAnimation animation = iterator.next();
+				if (animation.isFinished() && animation.getRemainingLoopCount() == 0) {
+					tmpAnimationsToFinish.add(animation);
+				} else {
+					animation.update();
+					didHandleAnimation = true;
+				}
 			}
 		}
 
 		// to avoid concurrent modification
-		for (BaseAnimation animation : tmpAnimationsToFinish) {
-			animations.remove(animation);
-			animation.callAnimationFinishedListeners();
-			if (animations.size() == 0 && allAnimationsFinishedListener != null) {
-				allAnimationsFinishedListener.onAnimationFinished(null);
+		if (tmpAnimationsToFinish.size() > 0) {
+			ListIterator<BaseAnimation> iterator = tmpAnimationsToFinish.listIterator();
+			while (iterator.hasNext()) {
+				BaseAnimation animation = iterator.next();
+				animations.remove(animation);
+				animation.callAnimationFinishedListeners();
+				if (animations.size() == 0 && allAnimationsFinishedListener != null) {
+					allAnimationsFinishedListener.onAnimationFinished(null);
+				}
 			}
+			tmpAnimationsToFinish.clear();
 		}
 
-		tmpAnimationsToFinish.clear();
 		return didHandleAnimation;
 	}
 
@@ -233,6 +246,18 @@ public class Ani {
 		if (pAnimation != null) {
 			pAnimation.onFinish();
 			tmpAnimationsToRemove.add(pAnimation);
+		}
+		return this;
+	}
+
+	/**
+	 * Stops all animations.
+	 * @return This instance.
+	 */
+	public Ani forceStop() {
+		ListIterator<BaseAnimation> iterator = animations.listIterator();
+		while (iterator.hasNext()) {
+			forceStop(iterator.next());
 		}
 		return this;
 	}
