@@ -238,7 +238,11 @@ public abstract class BaseAnimation {
 	 * @return the count of remaining loops.
 	 */
 	public int getRemainingLoopCount() {
-		return Math.max(loopLength - loopCount, - 1);
+		if (loopLength == -1 ) {
+			return -1;
+		} else {
+			return Math.max(loopLength - loopCount, 0);
+		}
 	}
 
 	/**

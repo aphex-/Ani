@@ -21,17 +21,8 @@ public class Ani {
 	/**
 	 * The animations to control.
 	 */
-	private final List<BaseAnimation> animations;
+	private final BaseAnimation[] animations;
 
-	/**
-	 * A cache of animations to remove.
-	 */
-	private List<BaseAnimation> tmpAnimationsToFinish;
-
-
-	private List<BaseAnimation> tmpAnimationsToAdd;
-
-	private List<BaseAnimation> tmpAnimationsToRemove;
 
 	private AnimationFinishedListener allAnimationsFinishedListener;
 
@@ -46,10 +37,7 @@ public class Ani {
 	 *
 	 */
 	public Ani() {
-		animations = new ArrayList<BaseAnimation>();
-		tmpAnimationsToFinish = new ArrayList<BaseAnimation>();
-		tmpAnimationsToAdd = new ArrayList<BaseAnimation>();
-		tmpAnimationsToRemove = new ArrayList<BaseAnimation>();
+		animations = new BaseAnimation[200];
 	}
 
 	/**
@@ -77,7 +65,11 @@ public class Ani {
 	 */
 	public final Ani add(final BaseAnimation pAnimation) {
 		if (pAnimation != null) {
-			tmpAnimationsToAdd.add(pAnimation.start());
+			for (int i = 0; i < animations.length; i++) {
+				if (animations[i] == null) {
+					animations[i] = pAnimation;
+				}
+			}
 		}
 		return this;
 	}
@@ -186,55 +178,65 @@ public class Ani {
 
 	public final boolean update() {
 		boolean didHandleAnimation = false;
-
-		// to avoid concurrent modification
-		if (tmpAnimationsToRemove.size() > 0) {
-			ListIterator<BaseAnimation> iterator = tmpAnimationsToRemove.listIterator();
-			while (iterator.hasNext()) {
-				BaseAnimation animation = iterator.next();
-				animations.remove(animation);
-			}
-			tmpAnimationsToRemove.clear();
-		}
-
-		// to avoid concurrent modification
-		if (tmpAnimationsToAdd.size() > 0) {
-			ListIterator<BaseAnimation> iterator = tmpAnimationsToAdd.listIterator();
-			while (iterator.hasNext()) {
-				BaseAnimation animation = iterator.next();
-				animations.add(animation);
-			}
-			tmpAnimationsToAdd.clear();
-		}
-
-		if (animations.size() > 0) {
-			ListIterator<BaseAnimation> iterator = animations.listIterator();
-			while (iterator.hasNext()) {
-				BaseAnimation animation = iterator.next();
+		for (int i = 0; i < animations.length; i++) {
+			BaseAnimation animation = animations[i];
+			if (animation != null) {
 				if (animation.isFinished() && animation.getRemainingLoopCount() == 0) {
-					tmpAnimationsToFinish.add(animation);
+					animations[i] = null;
+					animation.callAnimationFinishedListeners();
+					if (getAnimationCount() == 0 && allAnimationsFinishedListener != null) {
+						allAnimationsFinishedListener.onAnimationFinished(null);
+					}
+
 				} else {
 					animation.update();
 					didHandleAnimation = true;
 				}
 			}
 		}
-
-		// to avoid concurrent modification
-		if (tmpAnimationsToFinish.size() > 0) {
-			ListIterator<BaseAnimation> iterator = tmpAnimationsToFinish.listIterator();
-			while (iterator.hasNext()) {
-				BaseAnimation animation = iterator.next();
-				animations.remove(animation);
-				animation.callAnimationFinishedListeners();
-				if (animations.size() == 0 && allAnimationsFinishedListener != null) {
-					allAnimationsFinishedListener.onAnimationFinished(null);
-				}
-			}
-			tmpAnimationsToFinish.clear();
-		}
-
 		return didHandleAnimation;
+	}
+
+	/**
+	 * Gets the count of all animations.
+	 * @return The count.
+	 */
+	public int getAnimationCount() {
+		int count = 0;
+		for (BaseAnimation animation : animations) {
+			if (animation != null) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * Gets the index of an animation or -1
+	 * @param pAnimation The animation to get the index from.
+	 * @return The index or -1
+	 */
+	private int getIndexOf(BaseAnimation pAnimation) {
+		for (int i = 0; i < animations.length; i++) {
+			if (animations[i] == pAnimation) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Removes the animation.
+	 * @param pAnimation The animation to remove.
+	 * @return True if the animation was found.
+	 */
+	private boolean remove(BaseAnimation pAnimation) {
+		int indexOf = getIndexOf(pAnimation);
+		if (indexOf > -1) {
+			animations[indexOf] = null;
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -245,7 +247,8 @@ public class Ani {
 	public Ani forceStop(BaseAnimation pAnimation) {
 		if (pAnimation != null) {
 			pAnimation.onFinish();
-			tmpAnimationsToRemove.add(pAnimation);
+			pAnimation.callAnimationFinishedListeners();
+			remove(pAnimation);
 		}
 		return this;
 	}
@@ -255,9 +258,10 @@ public class Ani {
 	 * @return This instance.
 	 */
 	public Ani forceStop() {
-		ListIterator<BaseAnimation> iterator = animations.listIterator();
-		while (iterator.hasNext()) {
-			forceStop(iterator.next());
+		for (BaseAnimation animation : animations) {
+			if (animation != null) {
+				forceStop(animation);
+			}
 		}
 		return this;
 	}
