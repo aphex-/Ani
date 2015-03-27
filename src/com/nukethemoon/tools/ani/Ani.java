@@ -1,8 +1,5 @@
 package com.nukethemoon.tools.ani;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,6 +27,8 @@ public class Ani {
 	 * A time to schedule animation updates or null.
 	 */
 	private Timer timer = null;
+
+	private boolean enabled = true;
 
 	/**
 	 * Creates a new animation controller. Use this if you want to update animations
@@ -64,6 +63,9 @@ public class Ani {
 	 * @return This instance.
 	 */
 	public final Ani add(final BaseAnimation pAnimation) {
+		if (!enabled) {
+			return this;
+		}
 		if (pAnimation != null) {
 			for (int i = 0; i < animations.length; i++) {
 				if (animations[i] == null) {
@@ -84,6 +86,9 @@ public class Ani {
 	 * @return This instance.
 	 */
 	public final Ani add(final int pStartDelayMillis, final BaseAnimation pAnimation) {
+		if (!enabled) {
+			return this;
+		}
 		new java.util.Timer().schedule(
 				new java.util.TimerTask() {
 					@Override
@@ -103,6 +108,9 @@ public class Ani {
 	 * @return This instance.
 	 */
 	public final Ani add(final BaseAnimation pAnimations[], final AnimationFinishedListener pAllAnimationFinishedListener) {
+		if (!enabled) {
+			return this;
+		}
 		if (pAnimations == null || pAnimations.length == 0) {
 			return this;
 		}
@@ -126,6 +134,9 @@ public class Ani {
 	 * @return This instance.
 	 */
 	public final Ani add(final BaseAnimation pAnimations[]) {
+		if (!enabled) {
+			return this;
+		}
 		for (BaseAnimation animation : pAnimations) {
 			this.add(animation);
 		}
@@ -140,6 +151,10 @@ public class Ani {
 	 */
 	public final Ani addSequence(final BaseAnimation[] pAnimations,
 								 final AnimationFinishedListener pSequenceFinishedListener) {
+		if (!enabled) {
+			return this;
+		}
+
 		if (pAnimations != null && pAnimations.length > 0) {
 			if (pAnimations.length == 1) {
 				add(pAnimations[0]);
@@ -179,6 +194,10 @@ public class Ani {
 	 */
 
 	public final boolean update() {
+		if (!enabled) {
+			return false;
+		}
+
 		boolean didHandleAnimation = false;
 		for (int i = 0; i < animations.length; i++) {
 			BaseAnimation animation = animations[i];
@@ -299,4 +318,17 @@ public class Ani {
 	}
 
 
+	/**
+	 * Enables and disables the controller.
+	 * @param pEnabled The state.
+	 * @return This instance.
+	 */
+	public Ani setEnabled(boolean pEnabled) {
+		enabled = pEnabled;
+		return this;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
 }
