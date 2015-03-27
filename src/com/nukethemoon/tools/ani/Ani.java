@@ -247,11 +247,12 @@ public class Ani {
 	}
 
 	/**
-	 * Removes the animation.
-	 * @param pAnimation The animation to remove.
+	 * Stops the animation the hard way.
+	 * Does not call animation.onFinish nor its finish listeners.
+	 * @param pAnimation The animation to cancel.
 	 * @return True if the animation was found.
 	 */
-	private boolean remove(BaseAnimation pAnimation) {
+	public boolean cancel(BaseAnimation pAnimation) {
 		int indexOf = getIndexOf(pAnimation);
 		if (indexOf > -1) {
 			animations[indexOf] = null;
@@ -261,29 +262,45 @@ public class Ani {
 	}
 
 	/**
-	 * Stops the assigned animation.
+	 * Gracefully stops the animation and calls its listeners.
 	 * @param pAnimation The animation to stop.
 	 * @return This instance.
 	 */
-	public Ani forceStop(BaseAnimation pAnimation) {
+	public Ani stop(BaseAnimation pAnimation) {
 		if (pAnimation != null) {
 			pAnimation.onFinish();
 			pAnimation.callAnimationFinishedListeners();
-			remove(pAnimation);
+			cancel(pAnimation);
 		}
 		return this;
 	}
 
 	/**
-	 * Stops all animations.
+	 * Cancels all animations without calling animation.onFinish or its listeners.
 	 * @return This instance.
 	 */
-	public Ani forceStop() {
+	public Ani resetHard() {
 		for (BaseAnimation animation : animations) {
 			if (animation != null) {
-				forceStop(animation);
+				cancel(animation);
 			}
 		}
+		return this;
+	}
+
+	/**
+	 * Stops all animations and call animation.inFinish and the listeners.
+	 * Disables this instance while stopping. Enables it afterwards.
+	 * @return This instance.
+	 */
+	public Ani resetGraceful() {
+		setEnabled(false);
+		for (BaseAnimation animation : animations) {
+			if (animation != null) {
+				stop(animation);
+			}
+		}
+		setEnabled(true);
 		return this;
 	}
 
@@ -328,6 +345,10 @@ public class Ani {
 		return this;
 	}
 
+	/**
+	 * Returns true if this instance is enabled.
+	 * @return true if this instance is enabled.
+	 */
 	public boolean isEnabled() {
 		return enabled;
 	}
