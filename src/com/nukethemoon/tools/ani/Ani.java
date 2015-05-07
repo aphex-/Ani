@@ -69,8 +69,8 @@ public class Ani {
 		if (pAnimation != null) {
 			for (int i = 0; i < animations.length; i++) {
 				if (animations[i] == null) {
-					animations[i] = pAnimation;
 					pAnimation.start();
+					animations[i] = pAnimation;
 					return this;
 				}
 			}
