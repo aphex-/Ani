@@ -202,7 +202,7 @@ public class Ani {
 		for (int i = 0; i < animations.length; i++) {
 			BaseAnimation animation = animations[i];
 			if (animation != null) {
-				if (animation.isFinished() && animation.getRemainingLoopCount() == 0) {
+				if (animation.isFinished()) {
 					animations[i] = null;
 					animation.callAnimationFinishedListeners();
 					if (getAnimationCount() == 0 && allAnimationsFinishedListener != null) {

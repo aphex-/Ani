@@ -20,6 +20,7 @@ public abstract class BaseAnimation {
 
 	private boolean lastUpdateCallDone = false;
 	private boolean started = false;
+	private boolean calledOnFinish = false;
 
 	private int loopLength = 0;
 	private int loopCount;
@@ -135,6 +136,7 @@ public abstract class BaseAnimation {
 	private void reset() {
 		this.timeStarted = System.currentTimeMillis();
 		lastUpdateCallDone = false;
+		calledOnFinish = false;
 	}
 
 	/**
@@ -153,7 +155,7 @@ public abstract class BaseAnimation {
 	 * @return true if the animation is done.
 	 */
 	public boolean isFinished() {
-		return this.lastUpdateCallDone && !isLooping();
+		return calledOnFinish;
 	}
 
 	/**
@@ -196,6 +198,7 @@ public abstract class BaseAnimation {
 				} else {
 					// progress ended and not lopping
 					onFinish();
+					calledOnFinish = true;
 					started = false;
 					return progress;
 				}
