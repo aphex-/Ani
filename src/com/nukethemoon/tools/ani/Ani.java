@@ -69,7 +69,9 @@ public class Ani {
 		if (pAnimation != null) {
 			for (int i = 0; i < animations.length; i++) {
 				if (animations[i] == null) {
-					pAnimation.start();
+					if (pAnimation.getTimeStartPlaned() == -1 && !pAnimation.hasStarted()) {
+						pAnimation.start();
+					}
 					animations[i] = pAnimation;
 					return this;
 				}
@@ -89,15 +91,8 @@ public class Ani {
 		if (!enabled) {
 			return this;
 		}
-		new java.util.Timer().schedule(
-				new java.util.TimerTask() {
-					@Override
-					public void run() {
-						add(pAnimation);
-					}
-				},
-				pStartDelayMillis
-		);
+		pAnimation.setTimeStartPlaned(System.currentTimeMillis() + pStartDelayMillis);
+		add(pAnimation);
 		return this;
 	}
 
@@ -202,6 +197,14 @@ public class Ani {
 		for (int i = 0; i < animations.length; i++) {
 			BaseAnimation animation = animations[i];
 			if (animation != null) {
+
+				// for delayed animations.
+				if (!animation.hasStarted() && animation.getTimeStartPlaned() != -1
+						&& animation.getTimeStartPlaned() <= System.currentTimeMillis()) {
+					animation.start();
+					animation.setTimeStartPlaned(-1);
+				}
+
 				if (animation.isFinished()) {
 					animations[i] = null;
 					animation.callAnimationFinishedListeners();

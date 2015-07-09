@@ -17,6 +17,7 @@ public abstract class BaseAnimation {
 	private long timeStarted;
 	private int durationMillis;
 	private long timeElapsedOnPause = -1;
+	private long timeStartPlaned = -1;
 
 	private boolean lastUpdateCallDone = false;
 	private boolean started = false;
@@ -295,6 +296,24 @@ public abstract class BaseAnimation {
 			timeElapsedOnPause = - 1;
 		}
 		return this;
+	}
+
+	/**
+	 * Gets the time to start the animation.
+	 * This is used for delayed animations.
+	 * @return The timestamp to start in millis.
+	 */
+	public long getTimeStartPlaned() {
+		return timeStartPlaned;
+	}
+
+	/**
+	 * Sets the time to start the animation.
+	 * This is used for delayed animations.
+	 * @param timeStartPlaned Timestamp in millis.
+	 */
+	public void setTimeStartPlaned(long timeStartPlaned) {
+		this.timeStartPlaned = timeStartPlaned;
 	}
 
 	/**

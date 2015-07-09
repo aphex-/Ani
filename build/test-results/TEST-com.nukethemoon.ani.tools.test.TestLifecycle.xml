@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.nukethemoon.ani.tools.test.TestLifecycle" tests="1" skipped="0" failures="0" errors="0" timestamp="2015-07-09T09:39:39" hostname="Zählwerk" time="0.16">
+  <properties/>
+  <testcase name="testLifecycle" classname="com.nukethemoon.ani.tools.test.TestLifecycle" time="0.16"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
