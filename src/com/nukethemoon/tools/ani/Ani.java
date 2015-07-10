@@ -91,7 +91,9 @@ public class Ani {
 		if (!enabled) {
 			return this;
 		}
-		pAnimation.setTimeStartPlaned(System.currentTimeMillis() + pStartDelayMillis);
+		if (pStartDelayMillis > 0) {
+			pAnimation.setTimeStartPlaned(System.currentTimeMillis() + pStartDelayMillis);
+		}
 		add(pAnimation);
 		return this;
 	}
